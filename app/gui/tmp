@@ -1,0 +1,93 @@
+var Controller = require('./Controller');
+var cp = require('child_process');
+var fs = require('fs');
+var gui = require('nw.gui');
+
+var url;
+var controller;
+
+function refresh(info) {
+    $('#displayer').html('');
+    var tasks = info.tasks;
+    for (var i = 0; i < tasks.length; i++) {
+        var task = tasks[i];
+    }
+}
+
+function cmdHandler(fullCmd) {
+    var args = fullCmd.split(/\s+/);
+    var cmd = args[0];
+    if (cmd == 'new') {
+        url = args[1];
+        if (typeof url != 'undefined') {
+            $('#file-dialog').click();
+        }
+    }
+}
+
+function initGUI() {
+    $('#file-dialog').change(function() {
+        var path = $(this).val();
+        var jsonData = {
+            type: 'new',
+            url: url,
+            path: path
+        };
+        controller.write(jsonData);
+    });
+    $('#cmd-line').enter(function() {
+        var cmd = $('#cmd-line').val();
+        cmdHandler(cmd);
+        $('#cmd-line').val('');
+    });
+    $('#cmd-line').toUnixStyle();
+    $('#cmd-line').focus();
+}
+
+function inputHandler(jsonData) {
+    var type = jsonData.type;
+    if (type == 'info') {
+        refresh(jsonData.info);
+    }
+}
+
+function initController() {
+    var controllerPath = '/app/controller';
+    // var controllerPath = '/../controller';
+    var controllerEnd = cp.spawn('ruby', [process.cwd() + controllerPath + '/main.rb'], {
+        cwd: process.cwd() + controllerPath
+    });
+    // capture window-close and kill the process
+    var win = gui.Window.get();
+    win.on('close', function() {
+        process.kill();
+    });
+    // kill the controller end
+    process.on('exit', function() {
+        controllerEnd.kill();
+    });
+    // redirect stderr of the controller end to stdout of the main process
+    controllerEnd.stderr.on('data', function(chunk) {
+        console.log(String(chunk));
+    });
+    controller = new Controller(controllerEnd.stdout, controllerEnd.stdin, inputHandler);
+    // refresh loop
+    setInterval(function() {
+        var jsonData = {
+            type: 'info'
+        }
+        controller.write(jsonData);
+    }, 100);
+}
+
+$(document).ready(function() {
+    initGUI();
+    // initController();
+
+    // var jsonData = {
+        // type: 'new',
+        // url: 'http://dlsw.baidu.com/sw-search-sp/soft/4f/20605/BaiduType_Setup3.3.2.16.1827398843.exe',
+        // path: '/home/ff_mercurial/tmp.exe'
+    // }
+    // controller.write(jsonData);
+});
