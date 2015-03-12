@@ -12,13 +12,14 @@ Notes for Accelerator
     - Supporter joined -> push tasks
     - delete/suspend/finish task -> notify Supporters to delete
 - Master与Supporter之间的通信
-    - ->new, url
-    - ->delete, id
-    - ->part, id
-    - <-nextPart, id
-    - <-chunk, id, part, chunk
+    - -> new, url
+    - -> delete, id
+    - -> part, id
+    - <- nextPart, id
+    - <- chunk, id, part, chunk
 - 遇到的问题
     - conditionVariable.wait可能产生deadlock(wait后无signal)
     - 各种IO模式
+        - r/r+: 文件必须存在
         - w/w+: 若文件存在则先清空
         - a/a+: 若文件存在则一切写入内容从原文件末尾开始(append)
