@@ -23,3 +23,5 @@ Notes for Accelerator
         - r/r+: 文件必须存在
         - w/w+: 若文件存在则先清空
         - a/a+: 若文件存在则一切写入内容从原文件末尾开始(append)
+- 未处理的问题
+    - LocalThread中使用了thread.kill(暴力终止线程?), 可能是危险的做法
