@@ -7,6 +7,7 @@ class Controller
     def initialize
         @output = JsonOutputStream.new STDOUT
         @ltm = LocalTaskManager.new
+        @stms = []
         @input = JsonInputStream.new STDIN do |jsonData|
             inputHandler jsonData
         end

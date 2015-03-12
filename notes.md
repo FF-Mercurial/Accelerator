@@ -12,7 +12,7 @@ Notes for Accelerator
     - Supporter joined -> push tasks
     - delete/suspend/finish task -> notify Supporters to delete
 - Master与Supporter之间的通信
-    - -> new, url
+    - -> new, id, url
     - -> delete, id
     - -> part, id
     - <- nextPart, id
