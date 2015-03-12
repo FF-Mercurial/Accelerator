@@ -1,12 +1,16 @@
-Accelerator notes
+Notes for Accelerator
 - 总体架构(双进程)
     - Node-Webkit做前端
     - Ruby做后端
     - 前后端通过进程管道通信
 - 前端架构
     - setInterval定时刷新界面(从后端获取数据)
-- 后端架构(事件驱动)(1+下载线程)
-    - 单线程不断读取来自前端的输入, 并作出响应(IO与process串行, process会阻塞IO)
+- 后端架构(事件驱动)(主线程+下载线程)
+    - 主线程不断读取来自前端的输入, 并作出响应(IO与process串行, process会阻塞IO)
+- Master与Supporters之间的同步方式
+    - new task -> push to Supporters
+    - Supporter joined -> push tasks
+    - delete/suspend/finish task -> notify Supporters to delete
 - Master与Supporter之间的通信
     - ->new, url
     - ->delete, id
