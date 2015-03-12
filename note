@@ -1,0 +1,14 @@
+Accelerator设计文档
+- 总体架构(双进程)
+    - Node-Webkit做前端
+    - Ruby做后端
+    - 前后端通过进程管道通信
+- 前端架构
+    - setInterval定时刷新界面(从后端获取数据)
+- 后端架构(事件驱动)(1+nm线程)
+    - 单线程不断读取来自前端的输入, 并作出响应(IO与process串行, process会阻塞IO)
+- 遇到的问题
+    - conditionVariable.wait可能产生deadlock(wait后无signal)
+    - 各种IO模式
+        - w/w+: 若文件存在则先覆盖(覆盖后长度为0)
+        - a/a+: 若文件存在则一切写入内容从原文件末尾开始(append)
