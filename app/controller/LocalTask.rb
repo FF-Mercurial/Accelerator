@@ -1,14 +1,14 @@
 require 'json'
 require 'thread'
 
-require './LocalThread'
+require './DownloadThread'
 require './HttpRequest'
 require './ProgressMonitor'
 require './Part'
 
 class LocalTask
     THREADS_NUM = 5
-
+    
     @@nextId = 0
 
     attr_reader :id, :path
@@ -17,7 +17,7 @@ class LocalTask
         @ltm = ltm
         @path = path
         @url = url
-        File.new(@path, 'w').close if not File.exists? @path
+        # init task from file
         if (@url == nil)
             begin
                 archiveFile = File.new @path + '.acc', 'r'
@@ -31,7 +31,9 @@ class LocalTask
             rescue Errno::ENOENT
                 raise
             end
+        # init task as a new one
         else
+            # partition
             @parts = []
             @length = HttpRequest.getLength @url
             partNum = getPartsNum @length
@@ -41,25 +43,18 @@ class LocalTask
             end
             @parts << Part.new(partLength * (partNum - 1), @length - 1)
         end
+        @partsLock = Mutex.new
         progress = @length
         @parts.each do |part|
             progress -= part.count
         end
-        @partsLock = Mutex.new
         @pm = ProgressMonitor.new @length, progress
         @pmLock = Mutex.new
         @filename = @path.match(/[^\/]+$/)[0]
         @id = @@nextId
         @@nextId += 1
+        @fileLock = Mutex.new
         start
-    end
-
-    def << progress
-        if @pmLock.synchronize do @pm << progress end
-            archiveFile = @path + '.acc'
-            File.delete archiveFile if File.exists? archiveFile
-            @ltm.finishTask @id
-        end
     end
 
     def suspend
@@ -69,11 +64,17 @@ class LocalTask
         end
         @threads.clear
         @state = 'suspended'
+        @file.close
     end
 
     def start
+        if File.exists? @path
+            @file = File.new @path, 'r+'
+        else
+            @file = File.new @path, 'w' if not File.exists? @path
+        end
         @threads = Array.new THREADS_NUM do
-            LocalThread.new self, @url, @path
+            DownloadThread.new self, @url
         end
         @state = 'running'
     end
@@ -82,6 +83,7 @@ class LocalTask
         @threads.each do |thread|
             thread.kill
         end
+        @file.close
         File.delete @path
         File.delete @path + '.acc'
     end
@@ -103,6 +105,19 @@ class LocalTask
 
     def nextPart
         @partsLock.synchronize do @parts.pop end
+    end
+
+    def writeChunk part, chunk
+        @fileLock.synchronize do
+            @file.seek part.begin
+            @file.write chunk
+        end
+        part << chunk.length
+        if @pmLock.synchronize do @pm << chunk.length end
+            archiveFile = @path + '.acc'
+            File.delete archiveFile if File.exists? archiveFile
+            @ltm.finishTask @id
+        end
     end
 
     def getPartsNum length

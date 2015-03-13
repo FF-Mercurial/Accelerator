@@ -18,7 +18,7 @@ class Controller
         when 'new'
             url = jsonData['url']
             path = jsonData['path']
-            @ltm.newTask 'url' => url, 'path' => path
+            @ltm.newTask path, url
         when 'start'
             id = jsonData['id'].to_i
             @ltm.startTask id

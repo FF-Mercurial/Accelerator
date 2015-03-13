@@ -1,18 +1,14 @@
-require 'thread'
-
 require './HttpRequest.rb'
 
-class LocalThread
+class DownloadThread
     BUFSIZE = 1024
     
-    def initialize task, url, path
-        @file = File.new path, 'r+'
+    def initialize task, url
         @socket = nil
-        @partLock = Mutex.new
+        @task = task
         @thread = Thread.new do
             loop do
-                @partLock.synchronize do @part = task.nextPart end
-                @file.seek @part.begin
+                @part = @task.nextPart
                 break if @part == nil
                 @socket = HttpRequest.get url, @part
                 until @part.finished do
@@ -21,20 +17,16 @@ class LocalThread
                     rescue Errno::EAGAIN
                         retry
                     end
-                    @file.write chunk
-                    task << chunk.length
-                    @partLock.synchronize do @part << chunk.length end
+                    @task.writeChunk @part, chunk
                 end
                 @socket.close
             end
-            @file.close
         end
     end
 
     def kill
         @thread.kill
         @socket.close if @socket != nil and not @socket.closed?
-        @file.close if not @file.closed?
         @part
     end
 end

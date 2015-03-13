@@ -1,4 +1,4 @@
-require './SupportThread'
+require './DownloadThread'
 
 class SupportTask
     THREADS_NUM = 5
@@ -8,7 +8,7 @@ class SupportTask
         @id = id
         @url = url
         @threads = Array.new  THREADS_NUM do
-            SupportThread.new self, url
+            DownloadThread.new self, url
         end
     end
 
@@ -22,7 +22,7 @@ class SupportTask
         @stm.nextPart id
     end
 
-    def sendChunk part, chunk
-        @stm.sendChunk id, part, chunk
+    def writeChunk part, chunk
+        @stm.writeChunk id, part, chunk
     end
 end

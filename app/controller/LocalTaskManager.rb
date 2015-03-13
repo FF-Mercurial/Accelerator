@@ -40,7 +40,7 @@ class LocalTaskManager < TaskManager
             archiveFile = File.new ARCHIVE_PATH, 'r'
             paths = JSON.parse archiveFile.read
             paths.each do |path|
-                newTask 'path' => path
+                newTask path
             end
         rescue Errno::ENOENT
         end

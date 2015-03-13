@@ -47,7 +47,7 @@ class SupportTaskManager < TaskManager
         @output.write jsonData
     end
 
-    def sendChunk id, part, chunk
+    def writeChunk id, part, chunk
         jsonData = {
             'type' => 'chunk',
             'id' => id,
