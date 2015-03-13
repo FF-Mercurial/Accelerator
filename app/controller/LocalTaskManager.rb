@@ -1,12 +1,13 @@
 require 'json'
 
 require './LocalTask'
+require './TaskManager'
 
-class LocalTaskManager
+class LocalTaskManager < TaskManager
     ARCHIVE_PATH = '../../tasks.dat'
     
     def initialize
-        @tasks = {}
+        super
         loadTasks
     end
 
@@ -15,17 +16,8 @@ class LocalTaskManager
         @tasks[task.id] = task
     end
 
-    def suspendTask id
-        @tasks[id].suspend
-    end
-
     def startTask id
         @tasks[id].start
-    end
-
-    def deleteTask id
-        @tasks[id].delete
-        @tasks.delete id
     end
 
     def finishTask id

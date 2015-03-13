@@ -2,11 +2,11 @@ require './JsonInputStream'
 require './JsonOutputStream'
 require './Part'
 require './SupportTask'
+require './TaskManager'
 
-class SupportTaskManager
+class SupportTaskManager < TaskManager
     def initialize socket
         @socket = socket
-        @tasks = {}
         @input = JsonInputStream.new @socket do |jsonData|
             inputHandler jsonData
         end
@@ -33,11 +33,6 @@ class SupportTaskManager
     def newTask id, url
         task = SupportTask.new self, id, url
         @tasks[id] = task
-    end
-
-    def deleteTask id
-        @tasks[id].delete
-        @tasks.delete id
     end
 
     def pushPart id, part
