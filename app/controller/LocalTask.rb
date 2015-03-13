@@ -13,10 +13,10 @@ class LocalTask
 
     attr_reader :id, :path
 
-    def initialize ltm, args = {}
+    def initialize ltm, path, url = nil
         @ltm = ltm
-        @path = args['path']
-        @url = args['url']
+        @path = path
+        @url = url
         File.new(@path, 'w').close if not File.exists? @path
         if (@url == nil)
             begin

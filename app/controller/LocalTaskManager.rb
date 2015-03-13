@@ -10,8 +10,8 @@ class LocalTaskManager
         loadTasks
     end
 
-    def newTask args = {}
-        task = LocalTask.new self, args
+    def newTask path, url = nil
+        task = LocalTask.new self, path, url
         @tasks[task.id] = task
     end
 
