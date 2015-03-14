@@ -7,11 +7,18 @@ Notes for Accelerator
     - setInterval定时刷新界面(从后端获取数据)
 - 后端架构(事件驱动)(主线程+下载线程)
     - 主线程不断读取来自前端的输入, 并作出响应(IO与process串行, process会阻塞IO)
+- 前端与后端的通信规则
+    - -> new , url, path
+    - -> start/suspend/delete, id
+    - -> fetchInfo
+    - -> exit
+    - <- info
+    - <- exit
 - Master与Supporters之间的同步方式
     - new task -> push to Supporters
     - Supporter joined -> push tasks
     - delete/suspend/finish task -> notify Supporters to delete
-- Master与Supporter之间的通信
+- Master与Supporter的通信规则
     - -> new, id, url
     - -> delete, id
     - -> part, id

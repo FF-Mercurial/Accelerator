@@ -145,7 +145,7 @@ function initController() {
     // refresh loop
     setInterval(function() {
         var jsonData = {
-            type: 'info'
+            type: 'fetchInfo'
         }
         controller.write(jsonData);
     }, 100);
