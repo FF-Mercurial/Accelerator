@@ -30,8 +30,9 @@ class Supporter
         }
     end
 
-    def sendPart part
+    def sendPart id, part
         write 'part', {
+            'id' => id,
             'part' => part.toArray
         }
     end
@@ -47,7 +48,7 @@ class Supporter
     def inputHandler type, data
         case type
         when 'nextPart'
-            sendPart nextPart
+            sendPart nextPart id
         when 'chunk'
             id = data['id']
             part = data['part']
