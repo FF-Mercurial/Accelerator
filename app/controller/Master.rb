@@ -3,20 +3,20 @@ require './MyOutputStream'
 require './SupportTaskManager'
 
 class Master
-    NEXT_ID = 0
+    @@nextId = 0
     
     attr_reader :id
     
     def initialize socket
         @socket = socket
-        Thread.new do
+        @thread = Thread.new do
             @input = MyInputStream.new socket do |type, data|
                 inputHandler type, date
             end
         end
         @output = MyOutputStream.new socket
-        @id = NEXT_ID
-        NEXT_ID += 1
+        @id = @@next_id
+        @@next_id += 1
         @stm = SupportTaskManager self
     end
 

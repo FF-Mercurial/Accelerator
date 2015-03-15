@@ -5,7 +5,7 @@ class Supporter
     def initialize sm, socket
         @sm = sm
         @socket = socket
-        Thread.new do
+        @thread = Thread.new do
             @input = MyInputStream.new socket do |type, data|
                 inputHandler type, date
             end

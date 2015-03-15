@@ -2,12 +2,17 @@ require './MyInputStream'
 require './MyOutputStream'
 require './LocalTaskManager'
 require './SupporterManager'
+require './MasterManager'
+require './SupporterListener'
 
 class Controller
+    include Constants
+    
     def initialize
         @ltm = LocalTaskManager.new
         @stms = []
         @sm = SupporterManager.new @ltm
+        @sl = SupporterListener.new @sm
         @mm = MasterManager.new
         @output = MyOutputStream.new STDOUT
         @input = MyInputStream.new STDIN do |type, data|
@@ -19,32 +24,68 @@ class Controller
         @output.write type, data
     end
 
+    def newTask path, url
+        id = @ltm.newTask path, url
+        @sm.newTask id, url
+    end
+
+    def startTask id
+        @ltm.startTask id
+        @sm.startTask id
+    end
+
+    def suspendTask id
+        @ltm.suspendTask id
+        @sm.suspendTask id
+    end
+
+    def deleteTask id
+        @ltm.deleteTask id
+        @sm.deleteTask id
+    end
+
+    def connect ipAddr
+        socket = TCPSocket.new ipAddr, PORT
+        @mm.newMaster socket
+    end
+
+    def sendInfo
+        data = {
+            'info' => {
+                'tasks' => @ltm.tasks
+            }
+        }
+        write 'info', data
+    end
+
+    def finalize
+        @ltm.saveTasks
+        write 'exit'
+        exit
+    end
+
     def inputHandler type, data
         case type
         when 'new'
             url = data['url']
             path = data['path']
-            @ltm.newTask path, url
+            newTask path, url
         when 'start'
             id = data['id'].to_i
-            @ltm.startTask id
+            startTask id
         when 'suspend'
             id = data['id'].to_i
-            @ltm.suspendTask id
+            suspendTask id
         when 'delete'
             id = data['id'].to_i
-            @ltm.deleteTask id
+            deleteTask id
+        when 'connect'
+            ipAddr = data['ipAddr']
+            connect ipAddr
         when 'fetchInfo'
-            data = {
-                'info' => {
-                    'tasks' => @ltm.tasks
-                }
-            }
-            write 'info', data
+            sendInfo
         when 'exit'
-            @ltm.saveTasks
-            write 'exit'
-            exit
+            finalize
         end
     end
 end

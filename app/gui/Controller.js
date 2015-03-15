@@ -31,4 +31,10 @@ Controller.prototype.manageTask = function(op, id) {
     });
 }
 
+Controller.prototype.connect = function(ipAddr) {
+    this.write('connect', {
+        ipAddr: ipAddr
+    });
+}
+
 module.exports = Controller;

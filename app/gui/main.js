@@ -76,6 +76,9 @@ function cmdHandler(fullCmd) {
         if (typeof id != 'undefined') {
             controller.manageTask(op, id);
         }
+    } else if (cmd == 'connect') {
+        ipAddr = args[1];
+        controller.connect(ipAddr);
     }
 }
 

@@ -13,7 +13,9 @@ class LocalTaskManager < TaskManager
 
     def newTask path, url = nil
         task = LocalTask.new self, path, url
-        @tasks[task.id] = task
+        id = task.id
+        @tasks[id] = task
+        id
     end
 
     def startTask id
