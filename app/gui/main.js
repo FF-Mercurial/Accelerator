@@ -136,5 +136,5 @@ $(document).ready(function() {
     var url = 'http://dlsw.baidu.com/sw-search-sp/soft/4f/20605/BaiduType_Setup3.3.2.16.1827398843.exe';
     var path = '/mnt/shared/tmp.exe';
 
-    controller.newTask(url, path);
+    // controller.newTask(url, path);
 });

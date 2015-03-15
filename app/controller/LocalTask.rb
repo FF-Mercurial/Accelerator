@@ -25,7 +25,7 @@ class LocalTask
                 @url = task['url']
                 @parts = task['parts']
                 @parts.map! do |part|
-                    Part.new part[0], part[1]
+                    Part.new part
                 end
                 @length = task['length']
             rescue Errno::ENOENT
@@ -90,8 +90,8 @@ class LocalTask
 
     def save
         suspend if @state == 'running'
-        parts = @parts.map do |range|
-            [range.begin, range.end]
+        parts = @parts.map do |part|
+            part.toArray
         end
         archiveData = {
             'url' => @url,

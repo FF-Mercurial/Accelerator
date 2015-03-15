@@ -1,7 +1,17 @@
 class Part
-    def initialize s, t
-        @s = s
-        @t = t
+    def initialize s, t = nil
+        if t != nil
+            @s = s
+            @t = t
+        else
+            array = s
+            @s = array[0]
+            @t = array[1]
+        end
+    end
+
+    def toArray
+        [@s, @t]
     end
 
     def << progress
