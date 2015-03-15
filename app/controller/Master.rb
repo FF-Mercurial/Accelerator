@@ -1,13 +1,13 @@
 require './MyInputStream'
 require './MyOutputStream'
+require './SupportTaskManager'
 
 class Master
     NEXT_ID = 0
     
     attr_reader :id
     
-    def initialize mm, socket
-        @mm = mm
+    def initialize socket
         @socket = socket
         Thread.new do
             @input = MyInputStream.new socket do |type, data|
@@ -17,6 +17,7 @@ class Master
         @output = MyOutputStream.new socket
         @id = NEXT_ID
         NEXT_ID += 1
+        @stm = SupportTaskManager self
     end
 
     def write type, data
@@ -38,15 +39,15 @@ class Master
     end
 
     def newTask id, url
-        @mm.newTask id, url
+        @stm.newTask id, url
     end
 
     def deleteTask id
-        @mm.deleteTask id
+        @stm.deleteTask id
     end
 
     def pushPart id, part
-        @mm.pushPart id, part
+        @stm.pushPart id, part
     end
 
     def inputHandler type, data
