@@ -2,7 +2,6 @@ var Controller = require('./Controller');
 var cp = require('child_process');
 var gui = require('nw.gui');
 
-var url;
 var controller;
 
 function formatBytes(bytes) {
@@ -62,44 +61,29 @@ function refresh(info) {
     $('#displayer').html(html);
 }
 
-function contains(arr, elem) {
-    for (var i = 0; i < arr.length; i++) {
-        if (arr[i] == elem) {
-            return true;
-        }
-    }
-    return false;
-}
-
 function cmdHandler(fullCmd) {
     var args = fullCmd.split(/\s+/);
     var cmd = args[0];
     if (cmd == 'new') {
-        url = args[1];
+        var url = args[1];
         if (typeof url != 'undefined') {
+            $('#file-dialog').data('url', url);
             $('#file-dialog').click();
         }
     } else if (contains(['suspend', 'start', 'delete'], cmd)) {
         id = args[1];
+        op = cmd;
         if (typeof id != 'undefined') {
-            var jsonData = {
-                type: cmd,
-                id: id
-            }
-            controller.write(jsonData);
+            controller.manageTask(op, id);
         }
     }
 }
 
 function initGUI() {
     $('#file-dialog').change(function() {
+        var url = $('#file-dialog').data('url');
         var path = $(this).val();
-        var jsonData = {
-            type: 'new',
-            url: url,
-            path: path
-        };
-        controller.write(jsonData);
+        controller.newTask(url, path);
     });
     $('#cmd-line').enter(function() {
         var cmd = $('#cmd-line').val();
@@ -129,10 +113,7 @@ function initController() {
     var win = gui.Window.get();
     win.on('close', function() {
         // kill the controller process
-        jsonData = {
-            type: 'exit'
-        }
-        controller.write(jsonData);
+        controller.exit();
     });
     // redirect stderr of the controller end to stdout of the main process
     controllerEnd.stderr.on('data', function(chunk) {
@@ -144,10 +125,7 @@ function initController() {
     controller = new Controller(controllerEnd.stdout, controllerEnd.stdin, inputHandler);
     // refresh loop
     setInterval(function() {
-        var jsonData = {
-            type: 'fetchInfo'
-        }
-        controller.write(jsonData);
+        controller.fetchInfo();
     }, 100);
 }
 
@@ -155,11 +133,9 @@ $(document).ready(function() {
     initGUI();
     initController();
 
-    var jsonData = {
-        type: 'new',
-        // url: 'http://m1.ppy.sh/release/osu!install.exe',
-        url: 'http://dlsw.baidu.com/sw-search-sp/soft/4f/20605/BaiduType_Setup3.3.2.16.1827398843.exe',
-        path: '/mnt/shared/tmp.exe'
-    }
-    controller.write(jsonData);
+    // var url = 'http://m1.ppy.sh/release/osu!install.exe';
+    var url = 'http://dlsw.baidu.com/sw-search-sp/soft/4f/20605/BaiduType_Setup3.3.2.16.1827398843.exe';
+    var path = '/mnt/shared/tmp.exe';
+
+    controller.newTask(url, path);
 });

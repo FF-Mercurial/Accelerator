@@ -28,7 +28,7 @@ class Controller
         when 'delete'
             id = jsonData['id'].to_i
             @ltm.deleteTask id
-        when 'info'
+        when 'fetchInfo'
             data = {
                 'type' => 'info',
                 'info' => {
