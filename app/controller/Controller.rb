@@ -8,6 +8,7 @@ class Controller
         @ltm = LocalTaskManager.new
         @stms = []
         @sm = SupporterManager.new @ltm
+        @mm = MasterManager.new
         @output = MyOutputStream.new STDOUT
         @input = MyInputStream.new STDIN do |type, data|
             inputHandler type, data
