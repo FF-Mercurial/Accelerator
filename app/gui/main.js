@@ -94,10 +94,9 @@ function initGUI() {
     $('#cmd-line').focus();
 }
 
-function inputHandler(jsonData) {
-    var type = jsonData.type;
+function inputHandler(type, data) {
     if (type == 'info') {
-        refresh(jsonData.info);
+        refresh(data.info);
     } else if (type == 'exit') {
         process.exit();
     }

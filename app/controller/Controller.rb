@@ -9,44 +9,49 @@ class Controller
         @ltm = LocalTaskManager.new
         @stms = []
         @input = JsonInputStream.new STDIN do |jsonData|
-            inputHandler jsonData
+            type = jsonData['type']
+            data = jsonData
+            data.delete 'type'
+            inputHandler type, data
         end
     end
 
-    def inputHandler jsonData
-        case jsonData['type']
+    def write type, data = {}
+        jsonData = {
+            'type' => type
+        }
+        data.each do |key, value|
+            jsonData[key] = value
+        end
+        @output.write jsonData
+    end
+
+    def inputHandler type, data
+        case type
         when 'new'
-            url = jsonData['url']
-            path = jsonData['path']
+            url = data['url']
+            path = data['path']
             @ltm.newTask path, url
         when 'start'
-            id = jsonData['id'].to_i
+            id = data['id'].to_i
             @ltm.startTask id
         when 'suspend'
-            id = jsonData['id'].to_i
+            id = data['id'].to_i
             @ltm.suspendTask id
         when 'delete'
-            id = jsonData['id'].to_i
+            id = data['id'].to_i
             @ltm.deleteTask id
         when 'fetchInfo'
             data = {
-                'type' => 'info',
                 'info' => {
                     'tasks' => @ltm.tasks
                 }
             }
-            @output.write data
+            write 'info', data
         when 'exit'
             @ltm.saveTasks
-            data = {
-                'type' => 'exit'
-            }
-            @output.write data
+            write 'exit'
             exit
         end
-    end
-
-    def write jsonData
-        @output.write jsonData
     end
 end

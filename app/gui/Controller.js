@@ -2,7 +2,12 @@ var JsonInputStream = require('./JsonInputStream');
 var JsonOutputStream = require('./JsonOutputStream');
 
 var Controller = function(input, output, inputHandler) {
-    this.input = new JsonInputStream(input, inputHandler);
+    this.input = new JsonInputStream(input, function(jsonData) {
+        var type = jsonData.type;
+        var data = jsonData;
+        delete data.type;
+        inputHandler(type, data);
+    });
     this.output = new JsonOutputStream(output);
 }
 
