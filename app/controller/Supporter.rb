@@ -2,7 +2,8 @@ require './MyInputStream'
 require './MyOutputStream'
 
 class Supporter
-    def initialize socket
+    def initialize sm, socket
+        @sm = sm
         @socket = socket
         Thread.new do
             @input = MyInputStream.new socket do |type, data|
@@ -29,13 +30,29 @@ class Supporter
         }
     end
 
-    def sendPart
+    def sendPart part
         write 'part', {
-            'part' => 
+            'part' => part.toArray
         }
     end
 
+    def nextPart id
+        @sm.nextPart id
+    end
+
+    def writeChunk id, part, chunk
+        @sm.writeChunk id, part, chunk
+    end
+
     def inputHandler type, data
-        
+        case type
+        when 'nextPart'
+            sendPart nextPart
+        when 'chunk'
+            id = data['id']
+            part = data['part']
+            chunk = data['chunk']
+            writeChunk id, part, chunk
+        end
     end
 end

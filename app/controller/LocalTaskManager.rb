@@ -53,4 +53,12 @@ class LocalTaskManager < TaskManager
         end
         res
     end
+
+    def nextPart id
+        @tasks[id].nextPart
+    end
+
+    def writeChunk id, part, chunk
+        @tasks[id].writeChunk part, chunk
+    end
 end

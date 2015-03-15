@@ -1,13 +1,14 @@
 require './MyInputStream'
 require './MyOutputStream'
 require './LocalTaskManager'
-require 'json'
+require './SupporterManager'
 
 class Controller
     def initialize
-        @output = MyOutputStream.new STDOUT
         @ltm = LocalTaskManager.new
         @stms = []
+        @sm = SupporterManager.new @ltm
+        @output = MyOutputStream.new STDOUT
         @input = MyInputStream.new STDIN do |type, data|
             inputHandler type, data
         end

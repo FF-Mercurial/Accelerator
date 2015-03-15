@@ -1,12 +1,14 @@
 require './Supporter'
 
 class SupporterManager
-    def initialize
+    def initialize ltm
+        @ltm = ltm
         @supporters = []
     end
 
     def newSupporter socket
-        @supporters << Supporter.new socket
+        supporter = Supporter.new self, socket 
+        @supporters << supporter
     end
 
     def newTask id, url
@@ -19,5 +21,13 @@ class SupporterManager
         @supporters.each do |supporter|
             supporter.deleteTask id
         end
+    end
+
+    def nextPart id
+        @ltm.nextPart id
+    end
+
+    def writeChunk id, part, chunk
+        @ltm.writeChunk id, part, chunk
     end
 end
