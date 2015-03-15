@@ -1,29 +1,20 @@
-require './JsonInputStream'
-require './JsonOutputStream'
+require './MyInputStream'
+require './MyOutputStream'
 require './LocalTaskManager'
 require 'json'
 
 class Controller
     def initialize
-        @output = JsonOutputStream.new STDOUT
+        @output = MyOutputStream.new STDOUT
         @ltm = LocalTaskManager.new
         @stms = []
-        @input = JsonInputStream.new STDIN do |jsonData|
-            type = jsonData['type']
-            data = jsonData
-            data.delete 'type'
+        @input = MyInputStream.new STDIN do |type, data|
             inputHandler type, data
         end
     end
 
     def write type, data = {}
-        jsonData = {
-            'type' => type
-        }
-        data.each do |key, value|
-            jsonData[key] = value
-        end
-        @output.write jsonData
+        @output.write type, data
     end
 
     def inputHandler type, data

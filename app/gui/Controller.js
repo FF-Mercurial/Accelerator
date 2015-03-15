@@ -1,26 +1,13 @@
-var JsonInputStream = require('./JsonInputStream');
-var JsonOutputStream = require('./JsonOutputStream');
+var MyInputStream = require('./MyInputStream');
+var MyOutputStream = require('./MyOutputStream');
 
 var Controller = function(input, output, inputHandler) {
-    this.input = new JsonInputStream(input, function(jsonData) {
-        var type = jsonData.type;
-        var data = jsonData;
-        delete data.type;
-        inputHandler(type, data);
-    });
-    this.output = new JsonOutputStream(output);
+    this.input = new MyInputStream(input, inputHandler);
+    this.output = new MyOutputStream(output);
 }
 
 Controller.prototype.write = function(type, data) {
-    var jsonData = {
-        type: type
-    };
-    if (typeof data != 'undefined') {
-        for (var key in data) {
-            jsonData[key] = data[key];
-        }
-    }
-    this.output.write(jsonData);
+    this.output.write(type, data);
 }
 
 Controller.prototype.exit = function() {
