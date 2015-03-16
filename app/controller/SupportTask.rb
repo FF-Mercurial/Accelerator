@@ -3,7 +3,7 @@ require 'thread'
 require './DownloadThread'
 
 class SupportTask
-    THREADS_NUM = 1
+    THREADS_NUM = 5
     
     def initialize stm, id, url
         @stm = stm

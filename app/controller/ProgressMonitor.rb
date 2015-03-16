@@ -28,6 +28,7 @@ class ProgressMonitor
     end
 
     def speed
+        self << 0
         return 0 if @buf.length < 2
         deltaProgress = @buf[-1]['progress'] - @buf[0]['progress']
         deltaTime = @buf[-1]['timestamp'] - @buf[0]['timestamp']

@@ -7,7 +7,7 @@ require './ProgressMonitor'
 require './Part'
 
 class LocalTask
-    THREADS_NUM = 1
+    THREADS_NUM = 0
     
     @@nextId = 0
 

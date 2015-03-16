@@ -1,3 +1,5 @@
+require 'thread'
+
 require './HttpRequest'
 require './ProgressMonitor'
 
@@ -11,9 +13,12 @@ class DownloadThread
         @@nextId += 1
         @socket = nil
         @task = task
+        @partLock = Mutex.new
         @thread = Thread.new do
             loop do
-                @part = @task.nextPart
+                @partLock.synchronize do
+                    @part = @task.nextPart
+                end
                 break if @part == nil
                 @socket = HttpRequest.get url, @part
                 until @part.finished do
@@ -23,7 +28,9 @@ class DownloadThread
                         retry
                     end
                     @task.writeChunk @part, chunk
-                    @part << chunk.length
+                    @partLock.synchronize do
+                        @part << chunk.length
+                    end
                 end
                 @socket.close
             end
