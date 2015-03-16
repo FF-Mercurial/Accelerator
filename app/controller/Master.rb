@@ -62,7 +62,7 @@ class Master
             newTask id, url
         when 'delete'
             id = data['id']
-            newTask id
+            deleteTask id
         when 'part'
             id = data['id']
             part = Part.decode data['part']

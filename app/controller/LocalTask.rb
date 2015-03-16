@@ -8,11 +8,11 @@ require './Part'
 require './Util'
 
 class LocalTask
-    THREADS_NUM = 2
+    THREADS_NUM = 0
     
     @@nextId = 0
 
-    attr_reader :id, :path
+    attr_reader :id, :url, :path
 
     def initialize ltm, path, url = nil
         @ltm = ltm
@@ -56,42 +56,56 @@ class LocalTask
         @id = @@nextId
         @@nextId += 1
         @fileLock = Mutex.new
+        @state = 'suspended'
         start
     end
 
     def suspend
+        return if @state != 'running'
         @threads.each do |thread|
             part = thread.kill
-            @partsLock.synchronize do @parts << part end if part != nil
+            pushParts part if part != nil
         end
         @threads.clear
         @state = 'suspended'
         @file.close
     end
 
+    def pushParts parts
+        @partsLock.synchronize do
+            if parts.class == Array
+                @parts += parts
+            else
+                @parts << parts
+            end
+        end
+    end
+
     def start
+        return if @state != 'suspended'
         if File.exists? @path
             @file = File.new @path, 'r+'
         else
-            @file = File.new @path, 'w' if not File.exists? @path
+            @file = File.new @path, 'w'
         end
         @threads = Array.new THREADS_NUM do
             DownloadThread.new self, @url
         end
         @state = 'running'
+        @url
     end
 
     def delete
         @threads.each do |thread|
             thread.kill
         end
+        @threads.clear
         @file.close
         File.delete @path
         File.delete @path + '.acc'
     end
 
     def save
-        suspend if @state == 'running'
         parts = @parts.map do |part|
             part.encode
         end
@@ -103,6 +117,13 @@ class LocalTask
         archiveFile = File.new path + '.acc', 'w'
         archiveFile.write JSON.dump archiveData
         archiveFile.close
+    end
+
+    def finish
+        @file.close
+        archiveFile = @path + '.acc'
+        File.delete archiveFile if File.exists? archiveFile
+        @ltm.finishTask @id
     end
 
     def nextPart
@@ -117,9 +138,7 @@ class LocalTask
         @pmLock.synchronize do
             @accelPm << chunk.length if accel
             if @pm << chunk.length
-                archiveFile = @path + '.acc'
-                File.delete archiveFile if File.exists? archiveFile
-                @ltm.finishTask @id
+                finish
             end
         end
     end
@@ -135,6 +154,7 @@ class LocalTask
         @pmLock.unlock
         {
             'id' => @id,
+            'url' => @url,
             'filename' => @filename,
             'length' => @length,
             'fractionalProgress' => state['fractionalProgress'],

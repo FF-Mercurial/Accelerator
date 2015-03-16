@@ -4,6 +4,7 @@ require './LocalTaskManager'
 require './SupporterManager'
 require './MasterManager'
 require './SupporterListener'
+require './Util'
 
 class Controller
     include Constants
@@ -30,13 +31,14 @@ class Controller
     end
 
     def startTask id
-        @ltm.startTask id
-        @sm.startTask id
+        url = @ltm.startTask id
+        @sm.newTask id, url
     end
 
     def suspendTask id
         @ltm.suspendTask id
-        @sm.suspendTask id
+        parts = @sm.deleteTask id
+        @ltm.pushParts id, parts
     end
 
     def deleteTask id
@@ -52,13 +54,19 @@ class Controller
     def sendInfo
         data = {
             'info' => {
-                'tasks' => @ltm.tasks
+                'tasks' => @ltm.tasksInfo
             }
         }
         write 'info', data
     end
 
     def finalize
+        tasksInfo = @ltm.tasksInfo
+        tasksInfo.each do|taskInfo|
+            id = taskInfo['id']
+            parts = @sm.deleteTask id
+            @ltm.pushParts id, parts
+        end
         @ltm.saveTasks
         write 'exit'
         exit

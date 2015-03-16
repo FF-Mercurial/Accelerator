@@ -70,7 +70,7 @@ function cmdHandler(fullCmd) {
             $('#file-dialog').data('url', url);
             $('#file-dialog').click();
         }
-    } else if (contains(['suspend', 'start', 'delete'], cmd)) {
+    } else if (cmd == 'start' || cmd == 'suspend' || cmd == 'delete') {
         id = args[1];
         op = cmd;
         if (typeof id != 'undefined') {
@@ -140,12 +140,9 @@ $(document).ready(function() {
     initGUI();
     initController();
 
-    controller.connect('172.18.34.241');
-
     // var url = 'http://m1.ppy.sh/release/osu!install.exe';
     var url = 'http://dlsw.baidu.com/sw-search-sp/soft/4f/20605/BaiduType_Setup3.3.2.16.1827398843.exe';
     var path = '/mnt/shared/tmp.exe';
-    setTimeout(function() {
-        controller.newTask(url, path);
-    }, 1000);
+    controller.newTask(url, path);
+    controller.connect('172.18.34.241');
 });

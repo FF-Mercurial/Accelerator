@@ -22,11 +22,22 @@ class LocalTaskManager < TaskManager
         @tasks[id].start
     end
 
+    def suspendTask id
+        @tasks[id].suspend
+    end
+
+    def suspendAll
+        @tasks.each_key do |id|
+            suspendTask id
+        end
+    end
+
     def finishTask id
         @tasks.delete id
     end
 
     def saveTasks
+        suspendAll
         archiveData = []
         @tasks.each_value do |task|
             task.save
@@ -48,7 +59,7 @@ class LocalTaskManager < TaskManager
         end
     end
 
-    def tasks
+    def tasksInfo
         res = []
         @tasks.each_value do |task|
             res << task.info
@@ -62,5 +73,9 @@ class LocalTaskManager < TaskManager
 
     def writeChunk id, pos, chunk, accel = false
         @tasks[id].writeChunk pos, chunk, accel
+    end
+
+    def pushParts id, parts
+        @tasks[id].pushParts parts
     end
 end

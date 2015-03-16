@@ -1,4 +1,5 @@
 require './Supporter'
+require './Util'
 
 class SupporterManager
     def initialize ltm
@@ -8,6 +9,10 @@ class SupporterManager
 
     def newSupporter socket
         supporter = Supporter.new self, socket 
+        tasks = @ltm.tasksInfo
+        tasks.each do |task|
+            supporter.newTask task['id'].to_i, task['url']
+        end
         @supporters << supporter
     end
 
@@ -17,17 +22,19 @@ class SupporterManager
         end
     end
 
-    def deleteTask id
-        @supporters.each do |supporter|
-            supporter.deleteTask id
-        end
-    end
-
     def nextPart id
         @ltm.nextPart id
     end
 
     def writeChunk id, pos, chunk
         @ltm.writeChunk id, pos, chunk, true
+    end
+
+    def deleteTask id
+        parts = []
+        @supporters.each do |supporter|
+            parts += supporter.deleteTask(id)
+        end
+        parts
     end
 end

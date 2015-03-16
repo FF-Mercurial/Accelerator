@@ -45,4 +45,8 @@ class Part
     def clone
         Part.new @s, @t
     end
+
+    def equals part
+        @s == part.begin and @t == part.end
+    end
 end

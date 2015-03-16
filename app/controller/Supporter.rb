@@ -7,6 +7,7 @@ class Supporter
         @sm = sm
         @socket = socket
         @output = MyOutputStream.new socket
+        @parts = {}
         @thread = Thread.new do
             @input = MyInputStream.new socket do |type, data|
                 inputHandler type, data
@@ -19,6 +20,7 @@ class Supporter
     end
 
     def newTask id, url
+        @parts[id] = []
         write 'new', {
             'id' => id,
             'url' => url
@@ -26,12 +28,16 @@ class Supporter
     end
 
     def deleteTask id
+        parts = @parts[id]
+        @parts.delete id
         write 'delete', {
             'id' => id
         }
+        parts
     end
 
     def sendPart id, part
+        @parts[id] << part if part != nil
         write 'part', {
             'id' => id,
             'part' => part == nil ? [] : part.encode
@@ -44,6 +50,16 @@ class Supporter
 
     def writeChunk id, pos, chunk
         @sm.writeChunk id, pos, chunk
+        parts = @parts[id]
+        parts.each do |part|
+            if part.begin == pos
+                part << chunk.length
+                if part.finished
+                    parts.delete part
+                end
+                break
+            end
+        end
     end
 
     def inputHandler type, data
