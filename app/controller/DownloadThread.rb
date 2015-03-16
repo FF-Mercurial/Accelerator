@@ -1,4 +1,5 @@
 require './HttpRequest'
+require './ProgressMonitor'
 
 class DownloadThread
     BUFSIZE = 1024

@@ -6,6 +6,5 @@ class StringOutputStream
     def write str
         @output.write str.length.to_s + ' ' + str
         @output.flush
-        STDERR.puts 'write'
     end
 end

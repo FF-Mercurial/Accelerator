@@ -29,19 +29,12 @@ class Util
         def str2chunk str
             chunk = ''
             i = 0
-            str = str.bytes
-            loop do
-                begin
-                    h = str.next
-                    l = str.next
-                rescue
-                    break
-                end
-                if h == 0
-                    chunk << l
-                else
-                    chunk << (l + 128)
-                end
+            arr = str.bytes.to_a
+            while i < arr.length
+                h = arr[i]
+                l = arr[i + 1]
+                chunk << l + h / 127
+                i += 2
             end
             chunk
         end

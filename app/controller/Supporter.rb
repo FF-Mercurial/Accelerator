@@ -1,3 +1,4 @@
+require './ProgressMonitor'
 require './MyInputStream'
 require './MyOutputStream'
 require './Util'
@@ -7,6 +8,7 @@ class Supporter
         @sm = sm
         @socket = socket
         @output = MyOutputStream.new socket
+        @pm = ProgressMonitor.new
         @thread = Thread.new do
             @input = MyInputStream.new socket do |type, data|
                 inputHandler type, data
@@ -56,6 +58,7 @@ class Supporter
             id = data['id']
             part = Part.new data['part']
             chunk = Util.str2chunk data['chunk'] 
+            @pm << chunk.length
             writeChunk id, part, chunk
         end
     end

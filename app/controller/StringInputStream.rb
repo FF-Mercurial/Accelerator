@@ -1,7 +1,7 @@
 require './MyThread'
 
 class StringInputStream
-    BUFSIZE = 1024
+    BUFSIZE = 1024 * 1024
     
     def initialize input
         @input = input
@@ -10,7 +10,6 @@ class StringInputStream
             loop do
                 begin
                     chunk = @input.read_nonblock(BUFSIZE)
-                    STDERR.puts 'read'
                     @buf << chunk
                 rescue
                     retry
@@ -23,7 +22,7 @@ class StringInputStream
                         @buf = @buf[index + 1..-1]
                         str = @buf[0...length]
                         @buf = @buf[length..-1]
-                        yield str
+                        yield str if block_given?
                     else
                         break
                     end
