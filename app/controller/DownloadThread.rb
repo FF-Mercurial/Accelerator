@@ -2,6 +2,7 @@ require 'thread'
 
 require './HttpRequest'
 require './ProgressMonitor'
+require './Util'
 
 class DownloadThread
     BUFSIZE = 1024
@@ -27,9 +28,11 @@ class DownloadThread
                     rescue Errno::EAGAIN
                         retry
                     end
-                    @task.writeChunk @part, chunk
-                    @partLock.synchronize do
-                        @part << chunk.length
+                    if chunk.length > 0
+                        @task.writeChunk @part.begin, chunk
+                        @partLock.synchronize do
+                            @part << chunk.length
+                        end
                     end
                 end
                 @socket.close

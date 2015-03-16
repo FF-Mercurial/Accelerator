@@ -27,7 +27,7 @@ class SupporterManager
         @ltm.nextPart id
     end
 
-    def writeChunk id, part, chunk
-        @ltm.writeChunk id, part, chunk, true
+    def writeChunk id, pos, chunk
+        @ltm.writeChunk id, pos, chunk, true
     end
 end

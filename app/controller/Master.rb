@@ -1,5 +1,4 @@
 require 'json'
-require 'thread'
 
 require './MyInputStream'
 require './MyOutputStream'
@@ -13,7 +12,6 @@ class Master
     attr_reader :id
     
     def initialize socket
-        @lock = Mutex.new
         @socket = socket
         @thread = Thread.new do
             @input = MyInputStream.new socket do |type, data|
@@ -27,9 +25,7 @@ class Master
     end
 
     def write type, data
-        @lock.synchronize do
-            @output.write type, data
-        end
+        @output.write type, data
     end
 
     def nextPart id
@@ -38,10 +34,10 @@ class Master
         }
     end
 
-    def writeChunk id, part, chunk
+    def writeChunk id, pos, chunk
         write 'chunk', {
             'id' => id,
-            'part' => part.toArray,
+            'pos' => pos,
             'chunk' => Util.chunk2str(chunk)
         }
     end
@@ -69,7 +65,7 @@ class Master
             newTask id
         when 'part'
             id = data['id']
-            part = Part.new data['part']
+            part = Part.decode data['part']
             pushPart id, part
         end
     end

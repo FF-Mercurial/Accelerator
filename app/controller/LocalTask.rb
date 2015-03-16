@@ -5,9 +5,10 @@ require './DownloadThread'
 require './HttpRequest'
 require './ProgressMonitor'
 require './Part'
+require './Util'
 
 class LocalTask
-    THREADS_NUM = 0
+    THREADS_NUM = 2
     
     @@nextId = 0
 
@@ -25,7 +26,7 @@ class LocalTask
                 @url = task['url']
                 @parts = task['parts']
                 @parts.map! do |part|
-                    Part.new part
+                    Part.decode part
                 end
                 @length = task['length']
             rescue Errno::ENOENT
@@ -92,7 +93,7 @@ class LocalTask
     def save
         suspend if @state == 'running'
         parts = @parts.map do |part|
-            part.toArray
+            part.encode
         end
         archiveData = {
             'url' => @url,
@@ -108,9 +109,9 @@ class LocalTask
         @partsLock.synchronize do @parts.pop end
     end
 
-    def writeChunk part, chunk, accel = false
+    def writeChunk pos, chunk, accel = false
         @fileLock.synchronize do
-            @file.seek part.begin
+            @file.seek pos
             @file.write chunk
         end
         @pmLock.synchronize do
@@ -128,16 +129,18 @@ class LocalTask
     end
 
     def info
-        @pmLock.synchronize do
-            {
-                'id' => @id,
-                'filename' => @filename,
-                'length' => @length,
-                'fractionalProgress' => @pm.fractionalProgress,
-                'speed' => @pm.speed,
-                'accelSpeed' => @accelPm.speed,
-                'remainingTime' => @pm.remainingTime
-            }
-        end
+        @pmLock.lock
+            state = @pm.state
+            accelState = @accelPm.state
+        @pmLock.unlock
+        {
+            'id' => @id,
+            'filename' => @filename,
+            'length' => @length,
+            'fractionalProgress' => state['fractionalProgress'],
+            'speed' => state['speed'],
+            'accelSpeed' => accelState['speed'],
+            'remainingTime' => state['remainingTime']
+        }
     end
 end

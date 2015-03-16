@@ -1,6 +1,9 @@
+require 'thread'
+
 require 'socket'
 
 class Util
+    @@lock = Mutex.new
     class << self
         def getIpAddrs
             addrs = Socket.ip_address_list.select do |addr|
@@ -16,7 +19,7 @@ class Util
             str = ''
             chunk.each_byte do |byte|
                 if byte >= 128
-                    str << 127
+                    str << 1
                     str << (byte - 128)
                 else
                     str << 0
@@ -33,10 +36,27 @@ class Util
             while i < arr.length
                 h = arr[i]
                 l = arr[i + 1]
-                chunk << l + h / 127
+                chunk << l + h * 128
                 i += 2
             end
             chunk
         end
+
+        def log str
+            @@lock.synchronize do
+                STDERR.puts str
+                STDERR.flush
+            end
+        end
     end
 end
+
+# loop do
+    # chunk = ''
+    # length = rand(1024)
+    # length.times do
+        # chunk << rand(255)
+    # end
+    # res = Util.str2chunk Util.chunk2str chunk
+    # puts res == chunk
+# end

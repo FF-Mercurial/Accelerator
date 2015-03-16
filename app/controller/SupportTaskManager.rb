@@ -23,7 +23,7 @@ class SupportTaskManager < TaskManager
         @master.nextPart id
     end
 
-    def writeChunk id, part, chunk
-        @master.writeChunk id, part, chunk
+    def writeChunk id, pos, chunk
+        @master.writeChunk id, pos, chunk
     end
 end

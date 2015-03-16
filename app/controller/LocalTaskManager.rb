@@ -60,7 +60,7 @@ class LocalTaskManager < TaskManager
         @tasks[id].nextPart
     end
 
-    def writeChunk id, part, chunk, accel = false
-        @tasks[id].writeChunk part, chunk, accel
+    def writeChunk id, pos, chunk, accel = false
+        @tasks[id].writeChunk pos, chunk, accel
     end
 end

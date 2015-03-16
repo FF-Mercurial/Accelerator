@@ -1,16 +1,20 @@
 class Part
-    def initialize s, t = nil
-        if t != nil
-            @s = s
-            @t = t
+    def initialize s, t
+        @s = s
+        @t = t
+    end
+
+    def self.decode arr
+        if arr.length == 0
+            return nil
         else
-            array = s
-            @s = array[0]
-            @t = array[1]
+            s = arr[0]
+            t = arr[1]
+            Part.new s, t
         end
     end
 
-    def toArray
+    def encode
         [@s, @t]
     end
 
@@ -36,5 +40,9 @@ class Part
 
     def to_s
         "#{@s}-#{@t}"
+    end
+
+    def clone
+        Part.new @s, @t
     end
 end

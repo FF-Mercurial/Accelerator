@@ -3,13 +3,14 @@ require 'thread'
 require './DownloadThread'
 
 class SupportTask
-    THREADS_NUM = 5
+    THREADS_NUM = 2
     
     def initialize stm, id, url
         @stm = stm
         @id = id
         @url = url
-        @part = nil
+        @parts = []
+        @partsLock = Mutex.new
         @lock = Mutex.new
         @cv = ConditionVariable.new
         @threads = Array.new THREADS_NUM do
@@ -25,7 +26,7 @@ class SupportTask
 
     def pushPart part
         @lock.synchronize do
-            @part = part
+            @parts << part
             @cv.signal
         end
     end
@@ -34,11 +35,11 @@ class SupportTask
         @stm.nextPart @id
         @lock.synchronize do
             @cv.wait @lock
-            @part
+            part = @parts.pop
         end
     end
 
-    def writeChunk part, chunk
-        @stm.writeChunk @id, part, chunk
+    def writeChunk pos, chunk
+        @stm.writeChunk @id, pos, chunk
     end
 end

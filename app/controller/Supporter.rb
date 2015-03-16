@@ -1,4 +1,3 @@
-require './ProgressMonitor'
 require './MyInputStream'
 require './MyOutputStream'
 require './Util'
@@ -8,7 +7,6 @@ class Supporter
         @sm = sm
         @socket = socket
         @output = MyOutputStream.new socket
-        @pm = ProgressMonitor.new
         @thread = Thread.new do
             @input = MyInputStream.new socket do |type, data|
                 inputHandler type, data
@@ -36,7 +34,7 @@ class Supporter
     def sendPart id, part
         write 'part', {
             'id' => id,
-            'part' => part.toArray
+            'part' => part == nil ? [] : part.encode
         }
     end
 
@@ -44,8 +42,8 @@ class Supporter
         @sm.nextPart id
     end
 
-    def writeChunk id, part, chunk
-        @sm.writeChunk id, part, chunk
+    def writeChunk id, pos, chunk
+        @sm.writeChunk id, pos, chunk
     end
 
     def inputHandler type, data
@@ -56,10 +54,9 @@ class Supporter
             sendPart id, part
         when 'chunk'
             id = data['id']
-            part = Part.new data['part']
+            pos = data['pos']
             chunk = Util.str2chunk data['chunk'] 
-            @pm << chunk.length
-            writeChunk id, part, chunk
+            writeChunk id, pos, chunk
         end
     end
 end
