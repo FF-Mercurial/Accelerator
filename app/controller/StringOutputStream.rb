@@ -4,7 +4,8 @@ class StringOutputStream
     end
 
     def write str
-        @output.write_nonblock str.length.to_s + ' ' + str
-        # @output.flush
+        @output.write str.length.to_s + ' ' + str
+        @output.flush
+        STDERR.puts 'write'
     end
 end

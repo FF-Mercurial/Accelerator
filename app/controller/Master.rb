@@ -1,6 +1,11 @@
+require 'json'
+require 'thread'
+
 require './MyInputStream'
 require './MyOutputStream'
 require './SupportTaskManager'
+require './Part'
+require './Util'
 
 class Master
     @@nextId = 0
@@ -8,20 +13,23 @@ class Master
     attr_reader :id
     
     def initialize socket
+        @lock = Mutex.new
         @socket = socket
         @thread = Thread.new do
             @input = MyInputStream.new socket do |type, data|
-                inputHandler type, date
+                inputHandler type, data
             end
         end
         @output = MyOutputStream.new socket
-        @id = @@next_id
-        @@next_id += 1
-        @stm = SupportTaskManager self
+        @id = @@nextId
+        @@nextId += 1
+        @stm = SupportTaskManager.new self
     end
 
     def write type, data
-        @output.write type, data
+        @lock.synchronize do
+            @output.write type, data
+        end
     end
 
     def nextPart id
@@ -34,7 +42,7 @@ class Master
         write 'chunk', {
             'id' => id,
             'part' => part.toArray,
-            'chunk' => chunk
+            'chunk' => Util.chunk2str(chunk)
         }
     end
 
@@ -61,7 +69,7 @@ class Master
             newTask id
         when 'part'
             id = data['id']
-            part = data['part']
+            part = Part.new data['part']
             pushPart id, part
         end
     end

@@ -7,7 +7,7 @@ class LocalTaskManager < TaskManager
     ARCHIVE_PATH = '../../tasks.dat'
     
     def initialize
-        super
+        super()
         loadTasks
     end
 
@@ -60,7 +60,7 @@ class LocalTaskManager < TaskManager
         @tasks[id].nextPart
     end
 
-    def writeChunk id, part, chunk
-        @tasks[id].writeChunk part, chunk
+    def writeChunk id, part, chunk, accel = false
+        @tasks[id].writeChunk part, chunk, accel
     end
 end

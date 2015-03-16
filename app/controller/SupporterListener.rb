@@ -10,8 +10,8 @@ class SupporterListener
         @sm = sm
         addrs = Util.getIpAddrs
         addrs.each do |addr|
+            server = TCPServer.new addr, PORT
             Thread.new do
-                server = TCPServer.new addr, PORT
                 loop do
                     socket = server.accept
                     @sm.newSupporter socket

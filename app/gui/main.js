@@ -51,7 +51,7 @@ function refresh(info) {
         html += (task.fractionalProgress * 100).toFixed(1) + '%';
         html += '</div>';
         html += '<div class="speed">';
-        html += formatBytes(task.speed) + '/s';
+        html += formatBytes(task.speed) + '/s(+' + formatBytes(task.accelSpeed) + '/s)';
         html += '</div>';
         html += '<div class="remaining-time">';
         html += formatSeconds(task.remainingTime);
@@ -132,12 +132,20 @@ function initController() {
 }
 
 $(document).ready(function() {
+    try {
+        require('fs').unlinkSync('tasks.dat');
+    } catch (e) {
+    }
+    
     initGUI();
     initController();
+
+    controller.connect('172.18.34.241');
 
     // var url = 'http://m1.ppy.sh/release/osu!install.exe';
     var url = 'http://dlsw.baidu.com/sw-search-sp/soft/4f/20605/BaiduType_Setup3.3.2.16.1827398843.exe';
     var path = '/mnt/shared/tmp.exe';
-
-    controller.newTask(url, path);
+    setTimeout(function() {
+        controller.newTask(url, path);
+    }, 1000);
 });

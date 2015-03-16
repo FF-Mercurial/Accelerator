@@ -9,7 +9,9 @@ class StringInputStream
         # @readThread = MyThread.new do
             loop do
                 begin
-                    @buf += @input.read_nonblock BUFSIZE
+                    chunk = @input.read_nonblock(BUFSIZE)
+                    STDERR.puts 'read'
+                    @buf << chunk
                 rescue
                     retry
                 end

@@ -33,4 +33,8 @@ class Part
     def end
         @t
     end
+
+    def to_s
+        "#{@s}-#{@t}"
+    end
 end

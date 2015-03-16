@@ -1,16 +1,17 @@
 require './MyInputStream'
 require './MyOutputStream'
+require './Util'
 
 class Supporter
     def initialize sm, socket
         @sm = sm
         @socket = socket
+        @output = MyOutputStream.new socket
         @thread = Thread.new do
             @input = MyInputStream.new socket do |type, data|
-                inputHandler type, date
+                inputHandler type, data
             end
         end
-        @output = MyOutputStream.new socket
     end
 
     def write type, data
@@ -48,11 +49,13 @@ class Supporter
     def inputHandler type, data
         case type
         when 'nextPart'
-            sendPart nextPart id
+            id = data['id']
+            part = nextPart id
+            sendPart id, part
         when 'chunk'
             id = data['id']
-            part = data['part']
-            chunk = data['chunk']
+            part = Part.new data['part']
+            chunk = Util.str2chunk data['chunk'] 
             writeChunk id, part, chunk
         end
     end

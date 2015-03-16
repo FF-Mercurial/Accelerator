@@ -6,6 +6,7 @@ require './TaskManager'
 
 class SupportTaskManager < TaskManager
     def initialize master
+        super()
         @master = master
     end
 

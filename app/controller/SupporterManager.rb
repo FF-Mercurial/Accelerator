@@ -28,6 +28,6 @@ class SupporterManager
     end
 
     def writeChunk id, part, chunk
-        @ltm.writeChunk id, part, chunk
+        @ltm.writeChunk id, part, chunk, true
     end
 end

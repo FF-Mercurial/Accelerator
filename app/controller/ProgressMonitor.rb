@@ -2,7 +2,7 @@ class ProgressMonitor
     INTERVAL = 3
     MAX_REMAINING_TIME = 100 * 3600
     
-    def initialize maxProgress, progress = 0, interval = INTERVAL
+    def initialize maxProgress = 0, progress = 0, interval = INTERVAL
         @maxProgress = maxProgress
         @progress = progress
         @interval = INTERVAL

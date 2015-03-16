@@ -1,9 +1,13 @@
-require './HttpRequest.rb'
+require './HttpRequest'
 
 class DownloadThread
     BUFSIZE = 1024
+
+    @@nextId = 0
     
     def initialize task, url
+        @id = @@nextId
+        @@nextId += 1
         @socket = nil
         @task = task
         @thread = Thread.new do
@@ -18,6 +22,7 @@ class DownloadThread
                         retry
                     end
                     @task.writeChunk @part, chunk
+                    @part << chunk.length
                 end
                 @socket.close
             end

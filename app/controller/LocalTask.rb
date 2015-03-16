@@ -7,7 +7,7 @@ require './ProgressMonitor'
 require './Part'
 
 class LocalTask
-    THREADS_NUM = 5
+    THREADS_NUM = 0
     
     @@nextId = 0
 
@@ -50,6 +50,7 @@ class LocalTask
         end
         @pm = ProgressMonitor.new @length, progress
         @pmLock = Mutex.new
+        @accelPm = ProgressMonitor.new
         @filename = @path.match(/[^\/]+$/)[0]
         @id = @@nextId
         @@nextId += 1
@@ -107,16 +108,18 @@ class LocalTask
         @partsLock.synchronize do @parts.pop end
     end
 
-    def writeChunk part, chunk
+    def writeChunk part, chunk, accel = false
         @fileLock.synchronize do
             @file.seek part.begin
             @file.write chunk
         end
-        part << chunk.length
-        if @pmLock.synchronize do @pm << chunk.length end
-            archiveFile = @path + '.acc'
-            File.delete archiveFile if File.exists? archiveFile
-            @ltm.finishTask @id
+        @pmLock.synchronize do
+            @accelPm << chunk.length if accel
+            if @pm << chunk.length
+                archiveFile = @path + '.acc'
+                File.delete archiveFile if File.exists? archiveFile
+                @ltm.finishTask @id
+            end
         end
     end
 
@@ -132,6 +135,7 @@ class LocalTask
                 'length' => @length,
                 'fractionalProgress' => @pm.fractionalProgress,
                 'speed' => @pm.speed,
+                'accelSpeed' => @accelPm.speed,
                 'remainingTime' => @pm.remainingTime
             }
         end
