@@ -68,7 +68,9 @@ class LocalTask
         end
         @threads.clear
         @state = 'suspended'
-        @file.close
+        @fileLock.synchronize do
+            @file.close
+        end
     end
 
     def pushParts parts
@@ -131,10 +133,15 @@ class LocalTask
     end
 
     def writeChunk pos, chunk, accel = false
+        Util.log 'writing file'
         @fileLock.synchronize do
+            Util.log 'writing file~!' + "#{pos}"
             @file.seek pos
+            Util.log 'writing file~!!'
             @file.write chunk
+            Util.log 'writing file~!!!'
         end
+        Util.log 'written file'
         @pmLock.synchronize do
             @accelPm << chunk.length if accel
             if @pm << chunk.length

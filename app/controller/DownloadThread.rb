@@ -18,8 +18,10 @@ class DownloadThread
         @thread = Thread.new do
             loop do
                 @partLock.synchronize do
+                    Util.log 'asking'
                     @part = @task.nextPart
                 end
+                Util.log @part
                 break if @part == nil
                 @socket = HttpRequest.get url, @part
                 until @part.finished do

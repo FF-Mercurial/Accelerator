@@ -1,6 +1,7 @@
 require 'thread'
 
 require './DownloadThread'
+require './Util'
 
 class SupportTask
     THREADS_NUM = 2
@@ -25,16 +26,20 @@ class SupportTask
     end
 
     def pushPart part
+        Util.log 'arrived'
         @lock.synchronize do
             @parts << part
             @cv.signal
+            Util.log 'signaled'
         end
     end
 
     def nextPart
-        @stm.nextPart @id
         @lock.synchronize do
+            @stm.nextPart @id
+            Util.log 'waiting'
             @cv.wait @lock
+            Util.log 'got'
             part = @parts.pop
         end
     end

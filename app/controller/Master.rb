@@ -64,6 +64,7 @@ class Master
             id = data['id']
             deleteTask id
         when 'part'
+            Util.log 'arrived0'
             id = data['id']
             part = Part.decode data['part']
             pushPart id, part

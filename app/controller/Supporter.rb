@@ -49,7 +49,9 @@ class Supporter
     end
 
     def writeChunk id, pos, chunk
+        Util.log 'writing'
         @sm.writeChunk id, pos, chunk
+        Util.log 'writed'
         parts = @parts[id]
         parts.each do |part|
             if part.begin == pos
@@ -63,16 +65,20 @@ class Supporter
     end
 
     def inputHandler type, data
+        Util.log "processing: #{type}"
         case type
         when 'nextPart'
+            Util.log 'received request'
             id = data['id']
             part = nextPart id
             sendPart id, part
+            Util.log 'sended'
         when 'chunk'
             id = data['id']
             pos = data['pos']
             chunk = Util.str2chunk data['chunk'] 
             writeChunk id, pos, chunk
         end
+        Util.log "processed: #{type}"
     end
 end
