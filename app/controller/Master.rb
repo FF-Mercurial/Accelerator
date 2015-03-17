@@ -5,6 +5,7 @@ require './MyOutputStream'
 require './SupportTaskManager'
 require './Part'
 require './Util'
+require './MyTCPSocket'
 
 class Master
     @@nextId = 0
@@ -12,20 +13,18 @@ class Master
     attr_reader :id
     
     def initialize socket
-        @socket = socket
-        @thread = Thread.new do
-            @input = MyInputStream.new socket do |type, data|
-                inputHandler type, data
-            end
-        end
-        @output = MyOutputStream.new socket
+        @mySocket = MyTCPSocket.new socket, self
         @id = @@nextId
         @@nextId += 1
         @stm = SupportTaskManager.new self
     end
 
     def write type, data
-        @output.write type, data
+        @mySocket.write type, data
+    end
+
+    def disconnected
+        
     end
 
     def nextPart id
@@ -64,7 +63,6 @@ class Master
             id = data['id']
             deleteTask id
         when 'part'
-            Util.log 'arrived0'
             id = data['id']
             part = Part.decode data['part']
             pushPart id, part

@@ -1,21 +1,8 @@
-require 'thread'
-
-class MyThread < Thread
+class MyThread
     def initialize
         super
-        @killed = false
-        @lock = Mutex.new
-    end
-
-    def myKilled
-        @lock.synchronize do
-            return @killed
-        end
-    end
-
-    def myKill
-        @lock.synchronize do
-            @killed = true
+        at_exit do
+            join
         end
     end
 end

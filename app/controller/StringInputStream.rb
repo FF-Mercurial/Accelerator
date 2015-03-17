@@ -6,7 +6,7 @@ class StringInputStream
     def initialize input
         @input = input
         @buf = ''
-        # @readThread = MyThread.new do
+        @thread = MyThread.new do
             loop do
                 begin
                     chunk = @input.read_nonblock(BUFSIZE)
@@ -28,8 +28,7 @@ class StringInputStream
                     end
                 end
             end
-        # end
-        # @readThread.join
+        end
     end
 end
 
