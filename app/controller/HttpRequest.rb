@@ -83,5 +83,6 @@ end
 # test
 # url = 'http://dlsw.baidu.com:80/sw-search-sp/soft/4f/20605/BaiduType_Setup3.3.2.16.1827398843.exe'
 # require './Part'
-# part = Part.new 1, 100000
-# HttpRequest.get url, part
+# part = Part.new 1, 10
+# socket = HttpRequest.get url, part
+# puts socket.binmode?

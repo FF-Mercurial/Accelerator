@@ -17,25 +17,29 @@ class Util
 
         def chunk2str chunk
             str = ''
-            chunk.each_byte do |byte|
+            str.force_encoding 'ASCII-8BIT'
+            bytes = chunk.bytes
+            bytes.each do |byte|
                 if byte >= 128
-                    str << 1
-                    str << (byte - 128)
+                    h = 1
+                    l = byte - 128
                 else
-                    str << 0
-                    str << byte
+                    h = 0
+                    l = byte
                 end
+                str << h << l
             end
             str
         end
 
         def str2chunk str
             chunk = ''
+            chunk.force_encoding 'ASCII-8BIT'
+            bytes = str.bytes
             i = 0
-            arr = str.bytes.to_a
-            while i < arr.length
-                h = arr[i]
-                l = arr[i + 1]
+            while i < bytes.length
+                h = bytes[i]
+                l = bytes[i + 1]
                 chunk << l + h * 128
                 i += 2
             end
@@ -53,10 +57,13 @@ end
 
 # loop do
     # chunk = ''
-    # length = rand(1024)
+    # chunk.force_encoding 'ASCII-8BIT'
+    # length = 1024
     # length.times do
-        # chunk << rand(255)
+        # chunk << rand(256)
     # end
-    # res = Util.str2chunk Util.chunk2str chunk
+    # str = Util.chunk2str chunk
+    # res = Util.str2chunk str
+    # puts res.length.to_f / chunk.length
     # puts res == chunk
 # end

@@ -1,4 +1,5 @@
 require './JsonOutputStream'
+require './Util'
 
 class MyOutputStream
     def initialize output

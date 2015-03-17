@@ -1,5 +1,7 @@
-require './StringOutputStream'
 require 'json'
+
+require './StringOutputStream'
+require './Util'
 
 class JsonOutputStream
     def initialize output

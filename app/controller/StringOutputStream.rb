@@ -1,5 +1,7 @@
 require 'thread'
 
+require './Util'
+
 class StringOutputStream
     def initialize output
         @output = output
@@ -8,7 +10,7 @@ class StringOutputStream
 
     def write str
         @lock.synchronize do
-            @output.write str.length.to_s + ' ' + str
+            @output.write "#{str.length.to_s} #{str}"
             @output.flush
         end
     end

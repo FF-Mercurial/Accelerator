@@ -8,7 +8,7 @@ require './Part'
 require './Util'
 
 class LocalTask
-    THREADS_NUM = 0
+    THREADS_NUM = 2
     
     @@nextId = 0
 
@@ -84,9 +84,9 @@ class LocalTask
     def start
         return if @state != 'suspended'
         if File.exists? @path
-            @file = File.new @path, 'r+'
+            @file = File.new @path, 'rb+'
         else
-            @file = File.new @path, 'w'
+            @file = File.new @path, 'wb'
         end
         @threads = Array.new THREADS_NUM do
             DownloadThread.new self, @url

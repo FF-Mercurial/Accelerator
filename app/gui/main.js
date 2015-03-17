@@ -106,10 +106,11 @@ function inputHandler(type, data) {
 }
 
 function initController() {
-    var controllerPath = '/app/controller';
-    // var controllerPath = '/../controller';
-    var controllerEnd = cp.spawn('ruby', [process.cwd() + controllerPath + '/main.rb'], {
-        cwd: process.cwd() + controllerPath
+    var cwd = process.cwd();
+    var controllerPath = cwd + '/app/controller';
+    var rubyPath = '/home/ff_mercurial/.rubies/ruby-2.1.3/bin/ruby';
+    var controllerEnd = cp.spawn(rubyPath, [controllerPath + '/main.rb'], {
+        cwd: controllerPath
     });
     // capture window-close and kill the process
     var win = gui.Window.get();
@@ -133,7 +134,7 @@ function initController() {
 
 $(document).ready(function() {
     try {
-        require('fs').unlinkSync('tasks.dat');
+        // require('fs').unlinkSync('tasks.dat');
     } catch (e) {
     }
     
@@ -143,6 +144,6 @@ $(document).ready(function() {
     // var url = 'http://m1.ppy.sh/release/osu!install.exe';
     var url = 'http://dlsw.baidu.com/sw-search-sp/soft/4f/20605/BaiduType_Setup3.3.2.16.1827398843.exe';
     var path = '/mnt/shared/tmp.exe';
-    controller.newTask(url, path);
+    // controller.newTask(url, path);
     controller.connect('172.18.34.241');
 });
