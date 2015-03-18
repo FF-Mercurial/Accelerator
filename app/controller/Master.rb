@@ -12,7 +12,8 @@ class Master
     
     attr_reader :id
     
-    def initialize socket
+    def initialize mm, socket
+        @mm = mm
         @mySocket = MyTCPSocket.new socket, self
         @id = @@nextId
         @@nextId += 1
@@ -24,7 +25,9 @@ class Master
     end
 
     def disconnected
-        
+        @stm.deleteAll
+        @mySocket.close
+        @mm.removeMaster
     end
 
     def nextPart id
@@ -49,6 +52,10 @@ class Master
         @stm.deleteTask id
     end
 
+    def deleteAll
+        @stm.deleteAll
+    end
+
     def pushPart id, part
         @stm.pushPart id, part
     end
@@ -62,6 +69,8 @@ class Master
         when 'delete'
             id = data['id']
             deleteTask id
+        when 'deleteAll'
+            deleteAll
         when 'part'
             id = data['id']
             part = Part.decode data['part']

@@ -30,6 +30,10 @@ class StringInputStream
             end
         end
     end
+
+    def stopReading
+        @thread.kill
+    end
 end
 
 # test

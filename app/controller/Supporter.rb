@@ -15,7 +15,7 @@ class Supporter
     end
 
     def disconnected
-        
+        removeSupporter self, @parts
     end
 
     def newTask id, url
@@ -33,6 +33,11 @@ class Supporter
             'id' => id
         }
         parts
+    end
+
+    def deleteAll
+        write 'deleteAll'
+        @parts
     end
 
     def sendPart id, part

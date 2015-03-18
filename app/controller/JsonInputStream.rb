@@ -8,6 +8,10 @@ class JsonInputStream
             yield jsonData
         end
     end
+
+    def stopReading
+        @stringInputStream.stopReading
+    end
 end
 
 # test

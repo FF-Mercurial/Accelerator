@@ -16,6 +16,11 @@ class SupporterManager
         @supporters << supporter
     end
 
+    def removeSupporter supporter, parts
+        @ltm.pushParts parts
+        @supporters.delete supporter
+    end
+
     def newTask id, url
         @supporters.each do |supporter|
             supporter.newTask id, url
@@ -35,6 +40,17 @@ class SupporterManager
         @supporters.each do |supporter|
             parts += supporter.deleteTask(id)
         end
-        parts
+        @ltm.pushParts parts
+    end
+
+    def deleteAll
+        partsMap = {}
+        @supporters.each do |supporter|
+            partsMap0 = supporter.deleteAll
+            partsMap0.each do |id, parts|
+                partsMap[key] += value
+            end
+        end
+        @ltm.pushAllParts partsMap
     end
 end

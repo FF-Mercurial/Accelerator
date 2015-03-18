@@ -15,6 +15,16 @@ class SupportTaskManager < TaskManager
         @tasks[id] = task
     end
 
+    def deleteTask id
+        @task[id].delete
+    end
+
+    def deleteAll
+        @tasks.each_key do |id|
+            deleteTask id
+        end
+    end
+
     def pushPart id, part
         @tasks[id].pushPart part
     end

@@ -17,6 +17,12 @@ class MyTCPSocket
         @output = MyOutputStream.new socket
     end
 
+    def close
+        @beatThread.kill
+        @input.stop
+        @socket.close
+    end
+
     def write type, data
         @output.write type, data
     end

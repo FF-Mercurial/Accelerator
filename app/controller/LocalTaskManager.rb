@@ -78,4 +78,10 @@ class LocalTaskManager < TaskManager
     def pushParts id, parts
         @tasks[id].pushParts parts
     end
+
+    def pushAllParts partsMap
+        partsMap.each do |id, parts|
+            pushParts id, parts
+        end
+    end
 end

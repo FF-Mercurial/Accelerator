@@ -1,6 +1,8 @@
 var Controller = require('./Controller');
 var cp = require('child_process');
 var gui = require('nw.gui');
+var fs = require('fs');
+var path = require('path');
 
 var controller;
 
@@ -107,9 +109,14 @@ function inputHandler(type, data) {
 
 function initController() {
     var cwd = process.cwd();
-    var controllerPath = cwd + '/app/controller';
-    var rubyPath = '/home/ff_mercurial/.rubies/ruby-2.1.3/bin/ruby';
-    var controllerEnd = cp.spawn(rubyPath, [controllerPath + '/main.rb'], {
+    var controllerPath = path.join(cwd, 'app', 'controller');
+    // var rubyPath = 'ruby';
+    var settingsStr = fs.readFileSync(path.join(cwd, 'settings'), {
+        encoding: 'utf8'
+    });
+    var settings = eval('r=' + settingsStr);
+    var rubyPath = settings['rubyPath'];
+    var controllerEnd = cp.spawn(rubyPath, [path.join(controllerPath, 'main.rb')], {
         cwd: controllerPath
     });
     // capture window-close and kill the process
@@ -123,6 +130,7 @@ function initController() {
         process.stdout.write(String(chunk));
     });
     process.stderr.on('data', function(chunk) {
+        // console.log(String(chunk));
         process.stdout.write(String(chunk));
     });
     controller = new Controller(controllerEnd.stdout, controllerEnd.stdin, inputHandler);
@@ -134,7 +142,7 @@ function initController() {
 
 $(document).ready(function() {
     try {
-        // require('fs').unlinkSync('tasks.dat');
+        // fs.unlinkSync('tasks.dat');
     } catch (e) {
     }
     
@@ -144,6 +152,6 @@ $(document).ready(function() {
     // var url = 'http://m1.ppy.sh/release/osu!install.exe';
     var url = 'http://dlsw.baidu.com/sw-search-sp/soft/4f/20605/BaiduType_Setup3.3.2.16.1827398843.exe';
     var path = '/mnt/shared/tmp.exe';
-    controller.newTask(url, path);
-    controller.connect('172.18.34.241');
+    // controller.newTask(url, path);
+    // controller.connect('172.18.34.241');
 });

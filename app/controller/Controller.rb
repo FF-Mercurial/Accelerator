@@ -61,12 +61,7 @@ class Controller
     end
 
     def finalize
-        tasksInfo = @ltm.tasksInfo
-        tasksInfo.each do|taskInfo|
-            id = taskInfo['id']
-            parts = @sm.deleteTask id
-            @ltm.pushParts id, parts
-        end
+        @sm.deleteAll
         @ltm.saveTasks
         write 'exit'
         exit
