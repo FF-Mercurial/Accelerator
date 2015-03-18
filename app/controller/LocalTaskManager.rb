@@ -4,7 +4,7 @@ require './LocalTask'
 require './TaskManager'
 
 class LocalTaskManager < TaskManager
-    ARCHIVE_PATH = '../../tasks.dat'
+    ARCHIVE_PATH = File.join '..', '..', 'tasks.dat'
     
     def initialize
         super()

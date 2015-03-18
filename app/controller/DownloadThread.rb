@@ -24,7 +24,8 @@ class DownloadThread
                 @socket = HttpRequest.get url, @part
                 until @part.finished do
                     begin
-                        chunk = @socket.read_nonblock BUFSIZE
+                        # chunk = @socket.read_nonblock BUFSIZE
+                        chunk = @socket.readpartial BUFSIZE
                     rescue Errno::EAGAIN
                         retry
                     end

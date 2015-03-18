@@ -1,4 +1,5 @@
 require './MyThread'
+require './Util'
 
 class StringInputStream
     BUFSIZE = 1024 * 1024
@@ -9,9 +10,11 @@ class StringInputStream
         @thread = MyThread.new do
             loop do
                 begin
-                    chunk = @input.read_nonblock(BUFSIZE)
+                    # chunk = @input.read_nonblock BUFSIZE
+                    chunk = @input.readpartial BUFSIZE
                     @buf << chunk
                 rescue
+                    Util.log 'retry'
                     retry
                 end
                 loop do

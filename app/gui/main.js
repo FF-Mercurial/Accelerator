@@ -110,12 +110,7 @@ function inputHandler(type, data) {
 function initController() {
     var cwd = process.cwd();
     var controllerPath = path.join(cwd, 'app', 'controller');
-    // var rubyPath = 'ruby';
-    var settingsStr = fs.readFileSync(path.join(cwd, 'settings'), {
-        encoding: 'utf8'
-    });
-    var settings = eval('r=' + settingsStr);
-    var rubyPath = settings['rubyPath'];
+    var rubyPath = path.join(cwd, 'Ruby', 'bin', 'ruby');
     var controllerEnd = cp.spawn(rubyPath, [path.join(controllerPath, 'main.rb')], {
         cwd: controllerPath
     });
