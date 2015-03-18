@@ -1,13 +1,12 @@
-require './MyThread'
 require './Util'
 
 class StringInputStream
     BUFSIZE = 1024 * 1024
     
-    def initialize input
+    def initialize input, sync = false
         @input = input
         @buf = ''
-        @thread = MyThread.new do
+        @thread = Thread.new do
             loop do
                 begin
                     # chunk = @input.read_nonblock BUFSIZE
@@ -32,6 +31,7 @@ class StringInputStream
                 end
             end
         end
+        @thread.join if sync
     end
 
     def stopReading

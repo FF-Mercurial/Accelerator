@@ -2,8 +2,8 @@ require './StringInputStream'
 require 'json'
 
 class JsonInputStream
-    def initialize input
-        @stringInputStream = StringInputStream.new input do |str|
+    def initialize input, sync = false
+        @stringInputStream = StringInputStream.new input, sync do |str|
             jsonData = JSON.parse str
             yield jsonData
         end

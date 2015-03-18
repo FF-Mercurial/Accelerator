@@ -16,7 +16,7 @@ class Controller
         @sl = SupporterListener.new @sm
         @mm = MasterManager.new
         @output = MyOutputStream.new STDOUT
-        @input = MyInputStream.new STDIN do |type, data|
+        @input = MyInputStream.new STDIN, true do |type, data|
             inputHandler type, data
         end
     end

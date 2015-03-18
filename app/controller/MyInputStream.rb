@@ -1,8 +1,8 @@
 require './JsonInputStream'
 
 class MyInputStream
-    def initialize input
-        @jsonInputStream = JsonInputStream.new input do |jsonData|
+    def initialize input, sync = false
+        @jsonInputStream = JsonInputStream.new input, sync do |jsonData|
             type = jsonData['type']
             data = jsonData
             data.delete 'type'
