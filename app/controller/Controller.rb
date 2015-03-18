@@ -36,14 +36,13 @@ class Controller
     end
 
     def suspendTask id
+        @sm.deleteTask id
         @ltm.suspendTask id
-        parts = @sm.deleteTask id
-        @ltm.pushParts id, parts
     end
 
     def deleteTask id
-        @ltm.deleteTask id
         @sm.deleteTask id
+        @ltm.deleteTask id
     end
 
     def connect ipAddr

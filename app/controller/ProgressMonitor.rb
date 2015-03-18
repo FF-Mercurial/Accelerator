@@ -15,9 +15,11 @@ class ProgressMonitor
     def << progress, sync = true
         @lock.lock if sync
             @progress += progress
-            if @buf.length > 1
+            while @buf.length > 1
                 if @buf[-1]['timestamp'] - @buf[0]['timestamp'] > @interval
                     @buf.shift
+                else
+                    break
                 end
             end
             @buf << {
