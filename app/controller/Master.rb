@@ -29,7 +29,7 @@ class Master
     end
 
     def disconnected
-        @mm.removeMaster
+        @mm.removeMaster self
     end
 
     def remove

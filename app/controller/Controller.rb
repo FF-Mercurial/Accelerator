@@ -16,9 +16,8 @@ class Controller
         @stms = []
         @sm = SupporterManager.new @ltm
         @sl = SupporterListener.new @sm
-        @mm = MasterManager.new
-        @ms = MasterSearcher.new self
         @ss = SupporterSearcher.new
+        openSupporter
         @output = MyOutputStream.new STDOUT
         @input = MyInputStream.new STDIN, true do |type, data|
             inputHandler type, data
@@ -60,15 +59,23 @@ class Controller
             'info' => {
                 'tasks' => @ltm.tasksInfo,
                 'supportersNum' => @sm.supportersNum,
-                'supporterState' => true
+                'supporterState' => @mm != nil
             }
         }
         write 'info', data
     end
 
+    def openSupporter
+        return if @mm != nil
+        @mm = MasterManager.new
+        @ms = MasterSearcher.new self
+    end
+
     def closeSupporter
         @ms.close
         @mm.removeAll
+        @ms = nil
+        @mm = nil
     end
 
     def finalize

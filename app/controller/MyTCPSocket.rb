@@ -1,6 +1,7 @@
 require './MyInputStream'
 require './MyOutputStream'
 require './BeatThread'
+require './Util'
 
 class MyTCPSocket
     def initialize socket, handler
@@ -9,7 +10,7 @@ class MyTCPSocket
         @beatThread = BeatThread.new self
         @input = MyInputStream.new socket do |type, data|
             if type == 'beat'
-                @beatThread.receivedBeat
+                @beatThread.beatReceived
             else
                 @handler.inputHandler type, data
             end
@@ -22,17 +23,24 @@ class MyTCPSocket
     end
 
     def close
-        @beatThread.kill
         @input.stopReading
         @socket.close
     end
 
-    def write type, data
-        @output.write type, data
+    def write type, data = {}
+        begin
+            @output.write type, data
+        rescue
+            raise
+        end
     end
 
     def beat
-        write 'beat'
+        begin
+            write 'beat'
+        rescue
+            raise
+        end
     end
 
     def disconnected

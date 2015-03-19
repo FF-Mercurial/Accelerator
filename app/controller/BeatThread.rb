@@ -1,5 +1,7 @@
 require 'thread'
 
+require './Util'
+
 class BeatThread < Thread
     INTERVAL = 1
     UPPER_BOUNCE = 3
@@ -14,14 +16,23 @@ class BeatThread < Thread
             loop do
                 sleep @interval
                 if @count == UPPER_BOUNCE
-                    @mySocket.disconnected
+                    disconnected
                 end
-                @mySocket.beat
+                begin
+                    @mySocket.beat
+                rescue
+                    disconnected
+                end
                 @lock.synchronize do
                     @count += 1
                 end
             end
         end
+    end
+
+    def disconnected
+        @mySocket.disconnected
+        kill
     end
 
     def beatReceived

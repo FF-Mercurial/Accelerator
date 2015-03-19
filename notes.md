@@ -28,10 +28,9 @@
     - delete/suspend/finish task -> notify Supporters to delete
 
 - 遇到的问题
-    - MyThread
-        - 功能: 维护一个flag, myKill -> flag = true, myKilled -> return flag, 以myKilled设置断点, 以便调用myKill来安全地, 异步地中断线程(主要是用于DownloadThread, 考虑到直接中断线程可能会导致@part写不完全), 使用ConditionVariable使myKill变为同步方法(经过断点时signal, 确保线程任务已经结束)
-        - 问题: conditionVariable.wait可能产生deadlock(wait后无signal), 难以确保调用myKill时线程还有机会经过断点(myKilled)
-        - 解决方案: 
+    - 一个错误的实现——可以安全地同步地kill的线程MyThread
+        - 实现: 维护一个flag, myKill -> flag = true, myKilled -> return flag, 以myKilled设置断点, 以便调用myKill来安全地, 异步地中断线程(主要是用于DownloadThread, 考虑到直接中断线程可能会导致@part写不完全), 使用ConditionVariable使myKill变为同步方法(经过断点时signal, 确保线程任务已经结束)
+        - 问题: conditionVariable.wait可能产生deadlock(wait后无signal), 难以确保调用myKill时线程还有机会经过断点(myKilled), 比如此时线程已经执行完毕
     - 文件IO
         - 各种IO modes
             - r/r+: 文件必须存在
@@ -43,6 +42,9 @@
         - 字节串的一种字符表示形式: ASCII-8字符串, 但ASCII-8并不是UTF-8的子集, 因此也不能用于json编码中
         - 从ASCII-8中得到启发, 考虑ASCII-7, 它是UTF-8的子集, 可以直接用json编码, 而且可以很方便地与ASCII-8(字节串的字符表示形式)进行转换, 比如最简单的, 用两个ASCII-7字符(2个字节)表示一个ASCII-8字符(也就是一个字节), 其中高字节取最高位, 低字节取低7位(11111111 => 00000001 01111111), 完成转换, 空间效率为50%, 不大可观, 但由于瓶颈在远端网络IO, 而程序中这种转换只存在于局域网内的通信, 所以可以忽略空间效率的问题
         - 结论: 二进制数据可以通过ASCII-7编码成为合法的UTF-8串, 再用json进行编码, 空间效率50%
+    - thread.kill的陷阱
+        - 心跳线程检测到连接断开时进行异常处理, 其中包括kill心跳线程以及其他操作, 后者不会被执行(因为此前该线程已经被kill)
+        - 解决方案: 将thread.kill放到异常处理的最后, 或者新建线程执行异常处理操作
     - 关于跨平台
         - windows和linux的路径分隔符不同('\\', '/'), 应使用path.join生成路径
         - windows平台的stdin没有non-block模式

@@ -7,7 +7,7 @@ class Supporter
     def initialize sm, socket
         @sm = sm
         @mySocket = MyTCPSocket.new socket, self
-        @parts = {}
+        @partsMap = {}
     end
 
     def ipAddr
@@ -20,11 +20,11 @@ class Supporter
 
     def disconnected
         @mySocket.close
-        removeSupporter self, @parts
+        @sm.removeSupporter self, @partsMap
     end
 
     def newTask id, url
-        @parts[id] = []
+        @partsMap[id] = []
         write 'new', {
             'id' => id,
             'url' => url
@@ -32,8 +32,8 @@ class Supporter
     end
 
     def deleteTask id
-        parts = @parts[id]
-        @parts.delete id
+        parts = @partsMap[id]
+        @partsMap.delete id
         write 'delete', {
             'id' => id
         }
@@ -42,11 +42,11 @@ class Supporter
 
     def deleteAll
         write 'deleteAll'
-        @parts
+        @partsMap
     end
 
     def sendPart id, part
-        @parts[id] << part if part != nil
+        @partsMap[id] << part if part != nil
         write 'part', {
             'id' => id,
             'part' => part == nil ? [] : part.encode
@@ -59,7 +59,7 @@ class Supporter
 
     def writeChunk id, pos, chunk
         @sm.writeChunk id, pos, chunk
-        parts = @parts[id]
+        parts = @partsMap[id]
         parts.each do |part|
             if part.begin == pos
                 part << chunk.length
