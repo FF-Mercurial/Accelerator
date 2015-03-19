@@ -10,11 +10,16 @@ class Supporter
         @parts = {}
     end
 
-    def write type, data
+    def ipAddr
+        @mySocket.ipAddr
+    end
+
+    def write type, data = {}
         @mySocket.write type, data
     end
 
     def disconnected
+        @mySocket.close
         removeSupporter self, @parts
     end
 

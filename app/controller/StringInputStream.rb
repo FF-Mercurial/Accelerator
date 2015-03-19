@@ -13,7 +13,6 @@ class StringInputStream
                     chunk = @input.readpartial BUFSIZE
                     @buf << chunk
                 rescue
-                    Util.log 'retry'
                     retry
                 end
                 loop do

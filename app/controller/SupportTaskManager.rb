@@ -16,7 +16,7 @@ class SupportTaskManager < TaskManager
     end
 
     def deleteTask id
-        @task[id].delete
+        @tasks[id].delete
     end
 
     def deleteAll

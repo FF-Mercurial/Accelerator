@@ -8,7 +8,7 @@ require './Part'
 require './Util'
 
 class LocalTask
-    THREADS_NUM = 2
+    THREADS_NUM = 0
     
     @@nextId = 0
 

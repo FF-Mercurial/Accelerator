@@ -8,9 +8,9 @@ class SupporterListener
     
     def initialize sm
         @sm = sm
-        addrs = Util.getIpAddrs
-        addrs.each do |addr|
-            server = TCPServer.new addr, PORT
+        @addrs = Util.getIpAddrs
+        @addrs.each do |addr|
+            server = TCPServer.new addr, MASTER_PORT
             Thread.new do
                 loop do
                     socket = server.accept

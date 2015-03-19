@@ -39,6 +39,8 @@ function formatSeconds(seconds) {
 
 function refresh(info) {
     var html = '';
+    $('#supporters-num').html('Supporters Num: ' + info.supportersNum);
+    $('#supporter-state').html('Supporter Mode: ' + (info.supporterState ? 'on' : 'off'));
     var tasks = info.tasks;
     for (var i = 0; i < tasks.length; i++) {
         var task = tasks[i];
@@ -60,7 +62,7 @@ function refresh(info) {
         html += '</div>';
         html += '</div>';
     }
-    $('#displayer').html(html);
+    $('#tasks').html(html);
 }
 
 function cmdHandler(fullCmd) {
@@ -78,9 +80,8 @@ function cmdHandler(fullCmd) {
         if (typeof id != 'undefined') {
             controller.manageTask(op, id);
         }
-    } else if (cmd == 'connect') {
-        ipAddr = args[1];
-        controller.connect(ipAddr);
+    } else if (cmd == 'closeSupporter') {
+        controller.closeSupporter();
     }
 }
 
@@ -147,6 +148,6 @@ $(document).ready(function() {
     // var url = 'http://m1.ppy.sh/release/osu!install.exe';
     var url = 'http://dlsw.baidu.com/sw-search-sp/soft/4f/20605/BaiduType_Setup3.3.2.16.1827398843.exe';
     var path = 'tmp.exe';
-    // controller.newTask(url, path);
+    controller.newTask(url, path);
     // controller.connect('172.18.34.241');
 });

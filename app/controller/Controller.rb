@@ -4,6 +4,8 @@ require './LocalTaskManager'
 require './SupporterManager'
 require './MasterManager'
 require './SupporterListener'
+require './MasterSearcher'
+require './SupporterSearcher'
 require './Util'
 
 class Controller
@@ -15,6 +17,8 @@ class Controller
         @sm = SupporterManager.new @ltm
         @sl = SupporterListener.new @sm
         @mm = MasterManager.new
+        @ms = MasterSearcher.new self
+        @ss = SupporterSearcher.new
         @output = MyOutputStream.new STDOUT
         @input = MyInputStream.new STDIN, true do |type, data|
             inputHandler type, data
@@ -46,17 +50,25 @@ class Controller
     end
 
     def connect ipAddr
-        socket = TCPSocket.new ipAddr, PORT
+        return if @mm.include? ipAddr
+        socket = TCPSocket.new ipAddr, MASTER_PORT
         @mm.newMaster socket
     end
 
     def sendInfo
         data = {
             'info' => {
-                'tasks' => @ltm.tasksInfo
+                'tasks' => @ltm.tasksInfo,
+                'supportersNum' => @sm.supportersNum,
+                'supporterState' => true
             }
         }
         write 'info', data
+    end
+
+    def closeSupporter
+        @ms.close
+        @mm.removeAll
     end
 
     def finalize
@@ -84,6 +96,8 @@ class Controller
         when 'connect'
             ipAddr = data['ipAddr']
             connect ipAddr
+        when 'closeSupporter'
+            closeSupporter
         when 'fetchInfo'
             sendInfo
         when 'exit'

@@ -17,9 +17,13 @@ class MyTCPSocket
         @output = MyOutputStream.new socket
     end
 
+    def ipAddr
+        @socket.addr[3]
+    end
+
     def close
         @beatThread.kill
-        @input.stop
+        @input.stopReading
         @socket.close
     end
 

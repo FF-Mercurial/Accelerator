@@ -19,11 +19,11 @@ class LocalTaskManager < TaskManager
     end
 
     def startTask id
-        @tasks[id].start
+        @tasks[id].start if @tasks[id] != nil
     end
 
     def suspendTask id
-        @tasks[id].suspend
+        @tasks[id].suspend if @tasks[id] != nil
     end
 
     def suspendAll
@@ -76,7 +76,7 @@ class LocalTaskManager < TaskManager
     end
 
     def pushParts id, parts
-        @tasks[id].pushParts parts
+        @tasks[id].pushParts parts if @tasks[id] != nil
     end
 
     def pushAllParts partsMap

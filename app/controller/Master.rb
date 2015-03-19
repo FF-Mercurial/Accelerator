@@ -20,14 +20,21 @@ class Master
         @stm = SupportTaskManager.new self
     end
 
-    def write type, data
+    def ipAddr
+        @mySocket.ipAddr
+    end
+
+    def write type, data = {}
         @mySocket.write type, data
     end
 
     def disconnected
+        @mm.removeMaster
+    end
+
+    def remove
         @stm.deleteAll
         @mySocket.close
-        @mm.removeMaster
     end
 
     def nextPart id

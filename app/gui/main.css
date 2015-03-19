@@ -49,3 +49,17 @@ body {
 .remaining-time {
     width: 10%;
 }
+
+#status-line:after {
+    display: block;
+    content: '';
+    clear: both;
+}
+
+#supporters-num {
+    float: left;
+}
+
+#supporter-state {
+    float: right;
+}
