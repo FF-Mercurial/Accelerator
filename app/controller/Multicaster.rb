@@ -3,7 +3,9 @@ require 'socket'
 class Multicaster
     def initialize addr, port
         @socket = UDPSocket.new
-        # @socket.setsockopt :IPPROTO_IP, :IP_MULTICAST_TTL, 1
+
+        @socket.setsockopt :IPPROTO_IP, :IP_MULTICAST_TTL, 1
+
         @addr = addr
         @port = port
     end

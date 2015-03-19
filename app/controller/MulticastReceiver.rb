@@ -10,11 +10,13 @@ class MulticastReceiver
         @addr = addr
         @port = port
         @maxLength = maxLength
-        # membership = IPAddr.new(@addr).hton + IPAddr.new(BIND_ADDR).hton
-        # @socket.setsockopt :IPPROTO_IP, :IP_ADD_MEMBERSHIP, membership
+
+        membership = IPAddr.new(@addr).hton + IPAddr.new(BIND_ADDR).hton
+        @socket.setsockopt :IPPROTO_IP, :IP_ADD_MEMBERSHIP, membership
         # @socket.setsockopt :SOL_SOCKET, :SO_REUSEPORT, 1
-        # @socket.bind BIND_ADDR, @port
-        @socket.bind @addr, @port
+        @socket.bind BIND_ADDR, @port
+
+        # @socket.bind @addr, @port
     end
 
     def read

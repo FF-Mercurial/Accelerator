@@ -1,15 +1,18 @@
 require 'thread'
-
 require 'socket'
+
+require './MyOutputStream'
 
 class Util
     @@lock = Mutex.new
+    @@output = MyOutputStream.new STDOUT
+    
     class << self
         def getIpAddrs
             addrs = Socket.ip_address_list.select do |addr|
                 addr.ipv4_private?
             end
-            
+
             addrs.map do |addr|
                 addr.ip_address
             end
@@ -46,10 +49,11 @@ class Util
             chunk
         end
 
-        def log str
+        def log msg
             @@lock.synchronize do
-                STDERR.puts str
-                STDERR.flush
+                @@output.write 'log', {
+                    'msg' => msg.to_s + "\n"
+                }
             end
         end
     end

@@ -31,8 +31,18 @@ Controller.prototype.manageTask = function(op, id) {
     });
 }
 
-Controller.prototype.closeSupporter = function(ipAddr) {
+Controller.prototype.closeSupporter = function() {
     this.write('closeSupporter');
+}
+
+Controller.prototype.openSupporter = function() {
+    this.write('openSupporter');
+}
+
+Controller.prototype.connect = function(ipAddr) {
+    this.write('connect', {
+        ipAddr: ipAddr
+    });
 }
 
 module.exports = Controller;

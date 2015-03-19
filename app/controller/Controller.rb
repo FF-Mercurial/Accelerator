@@ -103,6 +103,8 @@ class Controller
         when 'connect'
             ipAddr = data['ipAddr']
             connect ipAddr
+        when 'openSupporter'
+            openSupporter
         when 'closeSupporter'
             closeSupporter
         when 'fetchInfo'

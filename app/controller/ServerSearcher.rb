@@ -9,7 +9,8 @@ class ServerSearcher
         @thread = Thread.new do
             loop do
                 msg, info = @mr.read
-                ipAddr = info[3]
+                # ipAddr = info[3]
+                ipAddr = msg
                 serverFound ipAddr
             end
         end

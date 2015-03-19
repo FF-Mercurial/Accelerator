@@ -80,8 +80,13 @@ function cmdHandler(fullCmd) {
         if (typeof id != 'undefined') {
             controller.manageTask(op, id);
         }
-    } else if (cmd == 'closeSupporter') {
+    } else if (cmd == 'close') {
         controller.closeSupporter();
+    } else if (cmd == 'open') {
+        controller.openSupporter();
+    } else if (cmd == 'connect') {
+        var ipAddr = args[1];
+        controller.connect(ipAddr);
     }
 }
 
@@ -105,6 +110,9 @@ function inputHandler(type, data) {
         refresh(data.info);
     } else if (type == 'exit') {
         process.exit();
+    } else if (type == 'log') {
+        console.log(data.msg);
+        // process.stdout.write(data.msg);
     }
 }
 
@@ -123,11 +131,10 @@ function initController() {
     });
     // redirect stderr of the controller end to stdout of the main process
     controllerEnd.stderr.on('data', function(chunk) {
-        process.stdout.write(String(chunk));
+        console.log(chunk.toString());
     });
     process.stderr.on('data', function(chunk) {
-        // console.log(String(chunk));
-        process.stdout.write(String(chunk));
+        console.log(chunk.toString());
     });
     controller = new Controller(controllerEnd.stdout, controllerEnd.stdin, inputHandler);
     // refresh loop
@@ -138,7 +145,7 @@ function initController() {
 
 $(document).ready(function() {
     try {
-        fs.unlinkSync('tasks.dat');
+        // fs.unlinkSync('tasks.dat');
     } catch (e) {
     }
     
@@ -147,7 +154,7 @@ $(document).ready(function() {
 
     // var url = 'http://m1.ppy.sh/release/osu!install.exe';
     var url = 'http://dlsw.baidu.com/sw-search-sp/soft/4f/20605/BaiduType_Setup3.3.2.16.1827398843.exe';
-    var path = 'tmp.exe';
-    controller.newTask(url, path);
-    // controller.connect('172.18.34.241');
+    // var path = path.join(process.cwd, 'tmp.exe');
+    var path = '/mnt/shared/tmp.exe';
+    // controller.newTask(url, path);
 });

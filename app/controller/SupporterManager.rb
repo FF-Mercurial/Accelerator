@@ -24,10 +24,8 @@ class SupporterManager
     end
 
     def removeSupporter supporter, partsMap
-        Util.log '!'
         @ltm.pushAllParts partsMap
         @supporters.delete supporter
-        Util.log '!!'
     end
 
     def newTask id, url

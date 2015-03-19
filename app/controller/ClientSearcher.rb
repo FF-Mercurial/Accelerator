@@ -1,4 +1,5 @@
 require './Multicaster'
+require './Util'
 require './Constants'
 
 class ClientSearcher
@@ -9,9 +10,12 @@ class ClientSearcher
     def initialize interval = INTERVAL
         @interval = interval
         @mc = Multicaster.new MULTICAST_ADDR, MULTICAST_PORT
+        @ipAddrs = Util.getIpAddrs
         @thread = Thread.new do
             loop do
-                @mc.write
+                @ipAddrs.each do |ipAddr|
+                    @mc.write ipAddr
+                end
                 sleep @interval
             end
         end
