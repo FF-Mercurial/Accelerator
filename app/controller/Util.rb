@@ -1,5 +1,6 @@
 require 'thread'
 require 'socket'
+require 'ipaddr'
 
 require './MyOutputStream'
 
@@ -9,12 +10,28 @@ class Util
     
     class << self
         def getIpAddrs
-            addrs = Socket.ip_address_list.select do |addr|
-                addr.ipv4_private?
+            os = whatOS
+            case os
+            when 'unix'
+                ifconfig = `ifconfig`
+                regex = /inet addr:(\d+\.\d+\.\d+\.\d+).*?Mask:(\d+\.\d+\.\d+\.\d+)/
+                matches = ifconfig.scan regex
+            when 'windows'
+                ipconfig = `ipconfig`
+                regex = /IPv4.*?(\d+\.\d+\.\d+\.\d+)[.\n].*?(\d+\.\d+\.\d+\.\d+)/
+                matches = ipconfig.scan regex
             end
-
-            addrs.map do |addr|
-                addr.ip_address
+            matches.delete_if do |match|
+                match[0] == '127.0.0.1'
+            end
+            matches.map do |match|
+                addr = match[0]
+                mask = match[1]
+                subnet = IPAddr.new("#{addr}/#{mask}").to_s
+                {
+                    'addr' => match[0],
+                    'subnet' => subnet
+                }
             end
         end
 
@@ -56,18 +73,13 @@ class Util
                 }
             end
         end
+
+        def whatOS
+            if RUBY_PLATFORM =~ /mingw/
+                return 'windows'
+            else
+                return 'unix'
+            end
+        end
     end
 end
-
-# loop do
-    # chunk = ''
-    # chunk.force_encoding 'ASCII-8BIT'
-    # length = 1024
-    # length.times do
-        # chunk << rand(256)
-    # end
-    # str = Util.chunk2str chunk
-    # res = Util.str2chunk str
-    # puts res.length.to_f / chunk.length
-    # puts res == chunk
-# end

@@ -1,20 +1,20 @@
+require 'json'
+
 require './Multicaster'
 require './Util'
 require './Constants'
 
 class ClientSearcher
-    include Constants
-
     INTERVAL = 1
     
-    def initialize interval = INTERVAL
+    def initialize multicastAddr, multicastPort, interval = INTERVAL
         @interval = interval
-        @mc = Multicaster.new MULTICAST_ADDR, MULTICAST_PORT
+        @mc = Multicaster.new multicastAddr, multicastPort
         @ipAddrs = Util.getIpAddrs
         @thread = Thread.new do
             loop do
                 @ipAddrs.each do |ipAddr|
-                    @mc.write ipAddr
+                    @mc.write JSON.dump ipAddr
                 end
                 sleep @interval
             end

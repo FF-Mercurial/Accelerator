@@ -86,6 +86,7 @@ function cmdHandler(fullCmd) {
         controller.openSupporter();
     } else if (cmd == 'connect') {
         var ipAddr = args[1];
+        var myIpAddr = args[2];
         controller.connect(ipAddr);
     }
 }
@@ -111,8 +112,8 @@ function inputHandler(type, data) {
     } else if (type == 'exit') {
         process.exit();
     } else if (type == 'log') {
-        console.log(data.msg);
-        // process.stdout.write(data.msg);
+        // console.log(data.msg);
+        process.stdout.write(data.msg);
     }
 }
 
@@ -131,10 +132,12 @@ function initController() {
     });
     // redirect stderr of the controller end to stdout of the main process
     controllerEnd.stderr.on('data', function(chunk) {
-        console.log(chunk.toString());
+        // console.log(chunk.toString());
+        process.stdout.write(chunk.toString());
     });
     process.stderr.on('data', function(chunk) {
-        console.log(chunk.toString());
+        // console.log(chunk.toString());
+        process.stdout.write(chunk.toString());
     });
     controller = new Controller(controllerEnd.stdout, controllerEnd.stdin, inputHandler);
     // refresh loop

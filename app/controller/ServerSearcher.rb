@@ -1,16 +1,16 @@
+require 'json'
+
 require './MulticastReceiver'
 require './Constants'
+require './Util'
 
 class ServerSearcher
-    include Constants
-    
-    def initialize
-        @mr = MulticastReceiver.new MULTICAST_ADDR, MULTICAST_PORT
+    def initialize multicastAddr, multicastPort
+        @mr = MulticastReceiver.new multicastAddr, multicastPort
         @thread = Thread.new do
             loop do
                 msg, info = @mr.read
-                # ipAddr = info[3]
-                ipAddr = msg
+                ipAddr = JSON.parse msg
                 serverFound ipAddr
             end
         end
@@ -19,5 +19,9 @@ class ServerSearcher
     def close
         @thread.kill
         @mr.close
+    end
+
+    def serverFound ipAddr
+        puts ipAddr
     end
 end

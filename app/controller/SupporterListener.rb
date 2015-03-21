@@ -8,15 +8,11 @@ class SupporterListener
     
     def initialize sm
         @sm = sm
-        server = TCPServer.new 0, MASTER_PORT
+        server = TCPServer.new '0.0.0.0', MASTER_PORT
         @thread = Thread.new do
             loop do
-                begin
-                    socket = server.accept
-                    @sm.newSupporter socket
-                rescue => e
-                    Util.log e
-                end
+                socket = server.accept
+                @sm.newSupporter socket
             end
         end
     end

@@ -13,6 +13,7 @@ class Master
     attr_reader :id
     
     def initialize mm, socket
+        Util.log socket.peeraddr
         @mm = mm
         @mySocket = MyTCPSocket.new socket, self
         @id = @@nextId

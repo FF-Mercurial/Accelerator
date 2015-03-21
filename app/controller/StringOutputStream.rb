@@ -1,7 +1,5 @@
 require 'thread'
 
-require './Util'
-
 class StringOutputStream
     def initialize output
         @output = output

@@ -19,7 +19,7 @@ class MyTCPSocket
     end
 
     def ipAddr
-        @socket.addr[3]
+        @socket.peeraddr[3]
     end
 
     def close

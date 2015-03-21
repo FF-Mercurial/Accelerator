@@ -48,9 +48,9 @@ class Controller
         @ltm.deleteTask id
     end
 
-    def connect ipAddr
+    def connect ipAddr, myIpAddr
         return if @mm.include? ipAddr
-        socket = TCPSocket.new ipAddr, MASTER_PORT
+        socket = TCPSocket.new ipAddr, MASTER_PORT, myIpAddr
         @mm.newMaster socket
     end
 
@@ -102,7 +102,8 @@ class Controller
             deleteTask id
         when 'connect'
             ipAddr = data['ipAddr']
-            connect ipAddr
+            myIpAddr = data['myIpAddr']
+            connect ipAddr, myIpAddr
         when 'openSupporter'
             openSupporter
         when 'closeSupporter'

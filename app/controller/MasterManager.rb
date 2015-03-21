@@ -6,10 +6,10 @@ class MasterManager
     end
 
     def include? ipAddr
-        count = @masters.count do |master|
-            master.ipAddr == ipAddr
+        @masters.each do |master|
+            return true if ipAddr == master.ipAddr
         end
-        count > 0
+        return false
     end
 
     def newMaster socket

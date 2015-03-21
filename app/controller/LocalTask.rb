@@ -52,7 +52,11 @@ class LocalTask
         @pm = ProgressMonitor.new @length, progress
         @pmLock = Mutex.new
         @accelPm = ProgressMonitor.new
-        @filename = @path.match(/[^\/]+$/)[0]
+        if Util.whatOS == 'unix'
+            @filename = @path.match(/[^\/]+$/)[0]
+        else
+            @filename = @path.match(/[^\\]+$/)[0]
+        end
         @id = @@nextId
         @@nextId += 1
         @fileLock = Mutex.new
