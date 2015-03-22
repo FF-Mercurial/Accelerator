@@ -1,9 +1,21 @@
+var path = require('path');
+var cp = require('child_process');
+
 var MyInputStream = require('./MyInputStream');
 var MyOutputStream = require('./MyOutputStream');
 
-var Controller = function(input, output, inputHandler) {
-    this.input = new MyInputStream(input, inputHandler);
-    this.output = new MyOutputStream(output);
+var Controller = function(inputHandler, errHandler) {
+    // spawn the ruby process
+    var cwd = process.cwd();
+    var controllerPath = path.join(cwd, 'app', 'controller');
+    var rubyPath = path.join(cwd, 'Ruby', 'bin', 'ruby');
+    var rubyProcess = cp.spawn(rubyPath, [path.join(controllerPath, 'main.rb')], {
+        cwd: controllerPath
+    });
+    rubyProcess.stderr.on('data', errHandler);
+
+    this.input = new MyInputStream(rubyProcess.stdout, inputHandler);
+    this.output = new MyOutputStream(rubyProcess.stdin);
 
     this.write = function(type, data) {
         this.output.write(type, data);

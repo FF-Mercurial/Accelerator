@@ -120,7 +120,7 @@ class LocalTask
             'parts' => parts,
             'length' => @length
         }
-        archiveFile = File.new path + '.acc', 'w'
+        archiveFile = File.new path + '.acc.json', 'w'
         archiveFile.write JSON.dump archiveData
         archiveFile.close
     end
