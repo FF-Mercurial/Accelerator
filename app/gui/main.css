@@ -7,6 +7,10 @@ body {
     text-align: center;
 }
 
+#container {
+    height: 400px;
+}
+
 #displayer, #cmd-line {
     border: solid 1px #777;
     width: 95%;
@@ -38,7 +42,7 @@ body {
     width: 30%;
 }
 
-.fractional-progress {
+.progress {
     width: 10%;
 }
 

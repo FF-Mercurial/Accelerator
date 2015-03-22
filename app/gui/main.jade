@@ -1,0 +1,16 @@
+doctype html
+html
+  head
+    script(src='jquery.js')
+    script(src='guiLib.js')
+    script(src='main.js')
+    link(rel='stylesheet' type='text/css' href='main.css')
+  body
+    div#container
+      div#displayer
+        div#status-line
+          span#supporters-num
+          span#supporter-state
+        div#tasks
+      input#cmd-line(type='text')
+      input#file-dialog(type='file' nwsaveas='')
