@@ -38,17 +38,27 @@ class Util
         def chunk2str chunk
             str = ''
             str.force_encoding 'ASCII-8BIT'
+            buf = 0
+            bufLength = 0
             bytes = chunk.bytes
             bytes.each do |byte|
-                if byte >= 128
-                    h = 1
-                    l = byte - 128
-                else
-                    h = 0
-                    l = byte
+                mask = 0
+                (bufLength + 1).times do
+                    mask <<= 1
+                    mask += 1
                 end
-                str << h << l
+                tail = byte & mask
+                nextByte = ((byte >> (bufLength + 1)) | (buf << (8 - bufLength - 1)))
+                str << nextByte
+                buf = tail
+                bufLength += 1
+                if bufLength == 7
+                    str << buf
+                    buf = 0
+                    bufLength = 0
+                end
             end
+            str << (buf << (7 - bufLength)) if bufLength > 0
             str
         end
 
@@ -56,12 +66,25 @@ class Util
             chunk = ''
             chunk.force_encoding 'ASCII-8BIT'
             bytes = str.bytes
-            i = 0
-            while i < bytes.length
-                h = bytes[i]
-                l = bytes[i + 1]
-                chunk << l + h * 128
-                i += 2
+            buf = 0
+            bufLength = 0
+            bytes.each do |byte|
+                if bufLength > 1
+                    mask = 0
+                    (bufLength - 1).times do
+                        mask <<= 1
+                        mask += 1
+                    end
+                    tail = byte & mask
+                    nextByte = (byte >> (bufLength - 1)) | (buf << (8 - bufLength))
+                    chunk << nextByte
+                    buf = tail
+                    bufLength = bufLength - 1
+                else
+                    buf <<= 7
+                    buf |= byte
+                    bufLength += 7
+                end
             end
             chunk
         end
