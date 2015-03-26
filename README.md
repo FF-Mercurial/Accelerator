@@ -4,19 +4,19 @@
 
 开发进度
 
-    - 后端: 完成基本功能(新建/暂停/删除任务, 自动发现局域网中的其他Accelerator并邀请其加入协同加速), 还在测试当中
+- 后端: 完成基本功能(新建/暂停/删除任务, 自动发现局域网中的其他Accelerator并邀请其加入协同加速), 还在测试当中
 
-    - 前端: 目前仅有约等于命令行的简陋界面 >.< 后端测试完毕后会逐步优化前端界面
+- 前端: 目前仅有约等于命令行的简陋界面 >.< 后端测试完毕后会逐步优化前端界面
 
 安装手册(暂时不提供完整的软件包, 需要自行下载运行环境)
     
-    1. 下载本repo
+1. 下载本repo
 
-    2. 下载对应平台的[NodeWebkit](nwjs.io)
+2. 下载对应平台的[NodeWebkit](nwjs.io)
 
-    3. 下载/安装对应平台的[Ruby](https://www.ruby-lang.org/en/documentation/installation/)(如果有的话可以跳过), 创建link: Accelerator/Ruby/bin/ruby, 测试版本为2.1.3, 其他版本可能不能正确运行
+3. 下载/安装对应平台的[Ruby](https://www.ruby-lang.org/en/documentation/installation/)(如果有的话可以跳过), 创建link: Accelerator/Ruby/bin/ruby, 测试版本为2.1.3, 其他版本可能不能正确运行
 
-    4. 启动: 执行/path/to/NodeWebkit/nw /path/to/Accelerator
+4. 启动: 执行/path/to/NodeWebkit/nw /path/to/Accelerator
 
 使用手册
 
