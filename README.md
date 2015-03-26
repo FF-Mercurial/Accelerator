@@ -1,36 +1,36 @@
 # Accelerator
 
-    用Node-Webkit & Ruby混合式前后端构建的桌面下载工具, 主要特色功能是控制多台PC协同下载以达到数倍的速度
+用Node-Webkit & Ruby混合式前后端构建的桌面下载工具, 主要特色功能是控制多台PC协同下载以达到数倍的速度
 
-    开发进度
+开发进度
 
-        - 后端: 完成基本功能(新建/暂停/删除任务, 自动发现局域网中的其他Accelerator并邀请其加入协同加速), 还在测试当中
+    - 后端: 完成基本功能(新建/暂停/删除任务, 自动发现局域网中的其他Accelerator并邀请其加入协同加速), 还在测试当中
 
-        - 前端: 目前仅有约等于命令行的简陋界面 >.< 后端测试完毕后会逐步优化前端界面
+    - 前端: 目前仅有约等于命令行的简陋界面 >.< 后端测试完毕后会逐步优化前端界面
 
-    安装手册(暂时不提供完整的软件包, 需要自行下载运行环境)
-        
-        1. 下载本repo
+安装手册(暂时不提供完整的软件包, 需要自行下载运行环境)
+    
+    1. 下载本repo
 
-        2. 下载对应平台的[NodeWebkit](nwjs.io)
+    2. 下载对应平台的[NodeWebkit](nwjs.io)
 
-        3. 下载/安装对应平台的[Ruby](https://www.ruby-lang.org/en/documentation/installation/)(如果有的话可以跳过), 创建link: Accelerator/Ruby/bin/ruby, 测试版本为2.1.3, 其他版本可能不能正确运行
+    3. 下载/安装对应平台的[Ruby](https://www.ruby-lang.org/en/documentation/installation/)(如果有的话可以跳过), 创建link: Accelerator/Ruby/bin/ruby, 测试版本为2.1.3, 其他版本可能不能正确运行
 
-        4. 启动: 执行/path/to/NodeWebkit/nw /path/to/Accelerator
+    4. 启动: 执行/path/to/NodeWebkit/nw /path/to/Accelerator
 
-    使用手册
+使用手册
 
-        目前GUI尚未完善, 只提供命令操作(支持<C-h><C-j>退格和回车哦 >.<), 各命令如下: 
+    目前GUI尚未完善, 只提供命令操作(支持<C-h><C-j>退格和回车哦 >.<), 各命令如下: 
 
-        - new #{url}: 新建任务, 之后会弹出文件对话框提示选择保存路径
+    - new #{url}: 新建任务, 之后会弹出文件对话框提示选择保存路径
 
-        - start/suspend/delete #{taskId}: 开始/暂停/删除指定的任务
+    - start/suspend/delete #{taskId}: 开始/暂停/删除指定的任务
 
-        - close: 关闭Supporter模式, 不再为其他Accelerator提供加速
+    - close: 关闭Supporter模式, 不再为其他Accelerator提供加速
 
-        - open: 开启Supporter模式(默认开启)
+    - open: 开启Supporter模式(默认开启)
 
-        启动后会自动邀请局域网中的其他Accelerators加入协同加速
+    启动后会自动邀请局域网中的其他Accelerators加入协同加速
 
 ## notes
 
