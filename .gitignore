@@ -2,3 +2,4 @@ tasks.dat
 run
 Ruby/
 NodeWebkit/
+node_modules/
